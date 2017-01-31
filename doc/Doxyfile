@@ -1,0 +1,53 @@
+# Doxyfile
+
+#---------------------------------------------------------------------------
+# Project related configuration options
+#---------------------------------------------------------------------------
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = "Ground Floor"
+PROJECT_NUMBER         = 1.3.37
+PROJECT_BRIEF          = "Shared libraries for embedded stuff"
+OUTPUT_DIRECTORY       =
+CREATE_SUBDIRS         = NO
+FULL_PATH_NAMES        = NO
+JAVADOC_AUTOBRIEF      = NO
+#---------------------------------------------------------------------------
+# Build related configuration options
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+CASE_SENSE_NAMES       = YES
+#---------------------------------------------------------------------------
+# Configuration options related to warning and progress messages
+#---------------------------------------------------------------------------
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_AS_ERROR          = NO
+#---------------------------------------------------------------------------
+# Configuration options related to the input files
+#---------------------------------------------------------------------------
+INPUT                  = ../src
+INPUT_ENCODING         = UTF-8
+RECURSIVE              = YES
+EXCLUDE                =
+EXCLUDE_SYMLINKS       = NO
+EXCLUDE_PATTERNS       =
+EXCLUDE_SYMBOLS        =
+#---------------------------------------------------------------------------
+# Configuration options related to the XML output
+#---------------------------------------------------------------------------
+GENERATE_XML           = YES
+XML_OUTPUT             = _build/doxyxml
+XML_PROGRAMLISTING     = YES
+#---------------------------------------------------------------------------
+# Configuration options related to other output
+#---------------------------------------------------------------------------
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_DOCBOOK       = NO
+GENERATE_AUTOGEN_DEF   = NO
+GENERATE_PERLMOD       = NO
+CLASS_DIAGRAMS         = NO
