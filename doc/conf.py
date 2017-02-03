@@ -96,7 +96,7 @@ todo_include_todos = True
 
 # -- Options for breathe (and doxygen) ------------------------------------
 
-breathe_default_project = the_name
+breathe_default_project = the_name_nospace
 breathe_projects = {
     breathe_default_project: '_build/doxyxml/'
 }

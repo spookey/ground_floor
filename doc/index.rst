@@ -5,23 +5,18 @@ Contents
 
 .. toctree::
     :maxdepth: 3
-    :caption: /
-
-    _defaults
-
-.. toctree::
-    :maxdepth: 3
     :caption: /ground
 
     ground/console
+    ground/shell
+    ground/store
     ground/network
 
 .. toctree::
     :maxdepth: 3
     :caption: /floor
 
-    floor/shell
-    floor/config
+    floor/networking
 
 
 Indices and tables
