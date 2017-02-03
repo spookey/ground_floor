@@ -2,3 +2,4 @@
 Console
 =======
 
+.. doxygenfile:: console.hpp
