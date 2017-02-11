@@ -1,5 +1,0 @@
-=======
-Console
-=======
-
-.. doxygenfile:: console.hpp

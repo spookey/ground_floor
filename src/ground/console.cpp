@@ -1,4 +1,4 @@
-#include "console.hpp"
+#include "ground/console.hpp"
 
 void Console::setup(void) {
     Serial.begin(_param.baudrate, _param.serialconfig);
@@ -24,7 +24,8 @@ String Console::box(char filler, String txt, uint8_t spacing) {
 }
 String Console::pad(char chomped, char filler, String txt, bool prepend, uint16_t width) {
     const uint16_t len = txt.length();
-    if (width >= (len - 2)) {
+    if (width <= 2) { return fill(width, chomped); }
+    if (width >= len) {
         String empty = fill((width - len), filler);
         return (prepend ? join(empty, txt) : join(txt, empty));
     } else {
@@ -46,9 +47,15 @@ void Console::log(String topic, String txt) {
 }
 void Console::llg(String subtopic, String txt) {
     text(join(
-        pad(subtopic, true, _param.block_full), ":",
+        pad(subtopic, true, _param.block_full), F(":"),
         String(_param.filler), txt
     ));
+}
+void Console::llg(String txt) {
+    txt.trim();
+    llg(F("::"), (
+        txt.length() ? join(txt, String(_param.filler)) : F("")
+    ), F(":::"));
 }
 // SERIAL INPUT //
 char Console::collect(char nothing) {
@@ -66,7 +73,9 @@ bool Console::brake(unsigned long wait) {
 // SERVICE //
 void Console::alarm(String topic, String reason, unsigned long wait) {
     while (true) {
-        log(topic, "ALARM!"); llg("reason", reason); llg("wait", String(wait));
+        log(topic, F("ALARM!"));
+        llg(F("reason"), reason);
+        llg(F("wait"), String(wait));
         if (brake(wait)) { return; }
 
         for (uint8_t sos = 0; sos < 3; sos++) {

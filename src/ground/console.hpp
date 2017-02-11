@@ -5,11 +5,10 @@
 
 /// switch serial config type between arduino and esp
 #ifdef ESP8266
-    #define SERIALCONFIG_T SerialConfig
+    #define SERIALCONFIG_T      SerialConfig
 #else
-    #define SERIALCONFIG_T uint8_t
+    #define SERIALCONFIG_T      uint8_t
 #endif
-
 
 /// \struct ConsoleParam
 /// \brief stores parameters for the serial setup
@@ -33,6 +32,8 @@ struct ConsoleParam {
         block_part(block_part), block_full(block_full), filler(filler),
         chomped(chomped), nocollect(nocollect), initialize(initialize) {}
 };
+
+#undef SERIALCONFIG_T
 
 /// \class Console
 /// \brief handles communication over the serial wire
@@ -75,12 +76,12 @@ public:
     /// draw a box around text
     /// \param txt guess what
     /// \param filler draw whitespace using this character
-    /// \param spacing gatsize between ``|`` and ``txt``
-    /// \return
+    /// \param spacing size of gap between ``|`` and ``txt``
+    /// \return e.g.
     ///
-    ///     +-----+
-    ///     | box |
-    ///     +-----+
+    ///     +-------------+
+    ///     | Wayne-Train |
+    ///     +-------------+
     String box(char filler, String txt, uint8_t spacing = 1);
     /// alias for Console::box with default filler
     String box(String txt, uint8_t spacing = 1) {
@@ -145,6 +146,8 @@ public:
     void llg(String topic, String aa, String bb, String cc, String dd) {
         llg(topic, join(aa, bb, cc, dd));
     }
+    /// short form for llg to use as divider
+    void llg(String txt="");
 
 // SERIAL INPUT //
     /// read one character from the serial
@@ -178,11 +181,8 @@ public:
     char get_filler(void) { return _param.filler; }
 
 private:
-    /// stores current ConsoleParam
-    ConsoleParam _param;
+    ConsoleParam _param;            ///< stores current ConsoleParam
 
 };
-
-#undef SERIALCONFIG_T
 
 #endif

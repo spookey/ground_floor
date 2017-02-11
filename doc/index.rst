@@ -4,20 +4,10 @@ Contents
 ========
 
 .. toctree::
-    :maxdepth: 3
-    :caption: /ground
+    :caption: API Documentation
+    :glob:
 
-    ground/console
-    ground/shell
-    ground/store
-    ground/network
-
-.. toctree::
-    :maxdepth: 3
-    :caption: /floor
-
-    floor/networking
-
+    api/*
 
 Indices and tables
 ------------------
