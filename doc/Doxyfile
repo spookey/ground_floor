@@ -17,6 +17,7 @@ JAVADOC_AUTOBRIEF      = NO
 EXTRACT_ALL            = YES
 CASE_SENSE_NAMES       = NO
 ENABLED_SECTIONS       =
+ENABLE_PREPROCESSING   = YES
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages
 #---------------------------------------------------------------------------

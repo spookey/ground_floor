@@ -1,0 +1,4 @@
+Struct ShellParam
+=================
+
+.. doxygenstruct:: ShellParam

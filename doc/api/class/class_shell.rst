@@ -1,0 +1,4 @@
+Class Shell
+===========
+
+.. doxygenclass:: Shell

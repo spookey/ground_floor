@@ -50,7 +50,7 @@ public:
 
 // TEXT PROCESSING //
     /// combine two strings
-    /// \return ``"aa" + "bb"``
+    /// \return ``'aa' + 'bb'``
     String join(String aa, String bb) { return aa + bb; }
     /// combine three strings
     String join(String aa, String bb, String cc) { return aa + bb + cc; }
@@ -58,13 +58,13 @@ public:
     String join(String aa, String bb, String cc, String dd) { return aa + bb + cc + dd; }
 
     /// generate repeating strings
-    /// \return ``width * "filler"``
+    /// \return ``width * 'filler'``
     String fill(uint16_t width, char filler);
     /// alias for Console::fill with default filler
     String fill(uint16_t width) { return fill(width, _param.filler); }
 
     /// embrace a string
-    /// \return ``(repeat * "left") + "txt" + (repeat * "right") (+ "\n")``
+    /// \return ``(repeat * 'left') + 'txt' + (repeat * 'right') (+ '\n')``
     String clip(
         char left, char right, String txt, uint8_t repeat = 1
     );
