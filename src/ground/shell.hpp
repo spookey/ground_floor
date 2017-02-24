@@ -11,6 +11,7 @@
 #define _SHELL_RETURNCODE(FUNC) \
     FUNC(0x00, SHELL_OK) \
     FUNC(0x12, SHELL_STORE_ACCESS_ERROR) \
+    FUNC(0x22, SHELL_NETWORKING_ERROR) \
     FUNC(0xab, SHELL_ARGUMENT_MISSING) \
     FUNC(0xac, SHELL_ARGUMENT_ERROR) \
     FUNC(0xfe, SHELL_FATAL_ERROR) \
@@ -32,13 +33,11 @@ typedef uint8_t shell_t;        ///< use this as returncode
 /// \brief stores parameters for the shell
 /// \brief pass this into Shell::Shell
 struct ShellParam {
-    String prompt;                  String err_prefix;
-    uint8_t command_limit;          uint16_t buffer_limit;
-    bool double_echo;
+    String prompt;                      uint8_t command_limit;
+    uint16_t buffer_limit;              bool double_echo;
 
     ShellParam(
         String prompt = "%>",           ///< intro prompt
-        String err_prefix = "!",        ///< prompt prefix on prev error
 #ifdef ESP8266
         uint8_t command_limit = 16,     ///< enrolled commands limit
         uint16_t buffer_limit = 64,     ///< limit of input buffer
@@ -47,7 +46,7 @@ struct ShellParam {
         uint16_t buffer_limit = 32,     ///< limit of input buffer
 #endif
         bool double_echo = true         ///< repeat input twice
-    ) : prompt(prompt), err_prefix(err_prefix),  command_limit(command_limit),
+    ) : prompt(prompt), command_limit(command_limit),
     buffer_limit(buffer_limit), double_echo(double_echo) {}
 };
 
@@ -135,7 +134,8 @@ private:
     String cmd_returncode(shell_t code) {
         String text;
         switch(code) { _SHELL_RETURNCODE(_SHELL_SWITCHCASE) }
-        text.toLowerCase();                     text.replace("_", " ");
+        text.toLowerCase();
+        text.replace("_", " ");
         return text.substring(6);
     }
 #undef _SHELL_SWITCHCASE
@@ -170,7 +170,7 @@ private:
     uint16_t _launched = 0;                 ///< keep some statistics
 
 public:
-    /// get number launched commands
+    /// get number of launched commands
     uint16_t get_launched(void) { return _launched; }
 
 };

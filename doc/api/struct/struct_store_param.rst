@@ -1,0 +1,4 @@
+Struct StoreParam
+=================
+
+.. doxygenstruct:: StoreParam

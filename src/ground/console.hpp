@@ -181,7 +181,7 @@ public:
     char get_filler(void) { return _param.filler; }
 
 private:
-    ConsoleParam _param;            ///< stores current ConsoleParam
+    const ConsoleParam _param;      ///< stores current ConsoleParam
 
 };
 

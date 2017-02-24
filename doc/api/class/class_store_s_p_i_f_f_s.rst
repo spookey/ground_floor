@@ -1,0 +1,4 @@
+Class StoreSPIFFS
+=================
+
+.. doxygenclass:: StoreSPIFFS

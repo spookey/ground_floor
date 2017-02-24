@@ -26,12 +26,15 @@ void Shell::cmd_help(void) {
     _text.llg(F("anything else"), F("this help"));
 }
 void Shell::cmd_launch(String line) {
-    String name, args = ""; shell_t code;
+    String name, args = "";
+    shell_t code;
     int32_t split = line.indexOf(" ");
     if (split > 0) {
         name = line.substring(0, split);
         args = line.substring(split + 1);
-    } else { name = line; }
+    } else {
+        name = line;
+    }
     for (uint8_t idx = 0; idx < _cmd_idx; idx++) {
         if (name == _commands[idx].name) {
             args.trim();
@@ -70,6 +73,7 @@ void Shell::append(char typed) {
 void Shell::remove(uint16_t num) {
     while (num--) {
         if (_buf_idx > 0) {
+            _buffer[_buf_idx] = '\0';
             _buf_idx--;
             _text.raw(SHELL_KEY_BACKSP);
             if (_param.double_echo) {
@@ -82,7 +86,7 @@ void Shell::remove(uint16_t num) {
 void Shell::invoke(void) {
     String line = _buffer;
     line.trim();
-    if (_buf_idx > 0 && !!line.length()) {
+    if (_buf_idx > 0 && line.length() > 0) {
         cmd_launch(line);
     }
     ready();
@@ -91,9 +95,9 @@ void Shell::invoke(void) {
 void Shell::loop(void) {
     char typed = _text.collect();
     switch (typed) {
-        case SHELL_KEY_RETURN:          invoke();               break;
-        case SHELL_KEY_ESCAPE:          remove(_buf_idx);       break;
-        case SHELL_KEY_BACKSP:          remove();               break;
-        default:                        append(typed);          break;
+        case SHELL_KEY_RETURN:          invoke();           break;
+        case SHELL_KEY_ESCAPE:          remove(_buf_idx);   break;
+        case SHELL_KEY_BACKSP:          remove();           break;
+        default:                        append(typed);      break;
     }
 }
