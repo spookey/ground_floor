@@ -129,7 +129,7 @@ public:
         log(topic, join(aa, bb, cc, dd));
     }
 
-    /// continue a logging block
+    /// continue a logging block, indented
     /// \pre follwing by Console::log
     /// \param subtopic whatever
     /// \param txt log message
@@ -146,7 +146,7 @@ public:
     void llg(String topic, String aa, String bb, String cc, String dd) {
         llg(topic, join(aa, bb, cc, dd));
     }
-    /// short form for llg to use as divider
+    /// short form for llg to use as empty divider
     void llg(String txt="");
 
 // SERIAL INPUT //

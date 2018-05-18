@@ -2,6 +2,7 @@
 #define _shell_hpp_
 
 #include <Arduino.h>
+
 #include "ground/console.hpp"
 
 #define SHELL_KEY_BACKSP    8   ///< key code for backspace

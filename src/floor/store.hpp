@@ -2,6 +2,7 @@
 #define _store_hpp_
 
 #include <Arduino.h>
+
 #include "ground/console.hpp"
 #include "ground/shell.hpp"
 

@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+
 #include "ground/console.hpp"
 #include "ground/shell.hpp"
 #include "floor/store.hpp"

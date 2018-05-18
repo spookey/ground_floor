@@ -34,7 +34,7 @@ if (os.environ.get('READTHEDOCS', False)):
 
 the_author = 'spky'
 the_name = 'Ground Floor'
-the_name_nospace = the_name.replace(' ', '')
+the_name_nospace = ''.join(the_name.split())
 the_title = 'Shared libraries for embedded stuff'
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -64,7 +64,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = the_name
-copyright = '2017, {}'.format(the_author)
+copyright = '2017-2018, {}'.format(the_author)
 author = the_author
 
 # The version info for the project you're documenting, acts as replacement for
@@ -123,6 +123,9 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# # The name of an image file (relative to this directory) to place at the top
+# # of the sidebar.
+html_logo = '_static/logo.png'
 
 # -- Options for HTMLHelp output ------------------------------------------
 

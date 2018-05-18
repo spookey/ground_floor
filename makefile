@@ -10,7 +10,7 @@ BAUDRT			?=	115200
 
 
 ___LINE___		:=	$$( \
-	printf "%0.s-" $$(seq 1 $$(printf "%s" "$(__HEADER__)" | wc -c) \
+	printf "%0.s-" $$(seq 1 $$(printf "%s" "$(__HEADER__)" | wc -c); \
 ))
 
 help:
@@ -18,8 +18,9 @@ help:
 	@echo $(___LINE___)
 	@echo
 	@echo "clean"		"\t\t"	"cleanup all files"
-	@echo "cleanapi"	"\t"	"cleanup all documentation files"
+	@echo "cleanapi"	"\t"	"cleanup all api documentation files"
 	@echo "cleandoc"	"\t"	"cleanup all documentation files"
+	@echo "cleansample"	"\t"	"cleanup all example project files"
 	@echo
 	@echo "doc"			"\t\t"	"build all documentation with sphinx"
 	@echo "docapi"		"\t\t"	"generate apidoc from xml with breathe-apidoc"
@@ -35,13 +36,12 @@ help:
 
 CMD_APIDOC		:=	breathe-apidoc
 CMD_DELTREE		:=	rm -rfv
-CMD_DEVMON		:=	platformio device monitor
 CMD_DOXYGEN		:=	doxygen
 CMD_MINICOM		:=	minicom
+CMD_PLATFORMIO	:=	platformio
 CMD_PYTHON3		:=	python3
 CMD_SPHINX		:=	sphinx-build
 CMD_WATCHDOG	:=	watchmedo
-
 
 cleanxml:
 	@$(CMD_DELTREE) $(DIR_BUILD_XML)/*
@@ -50,10 +50,13 @@ cleandoc:
 clean: cleanxml cleandoc
 
 cleanapi:
-	@(	read -p "are you sure?!? [y/N] > " sure; case $$sure in \
-		[Yy]) $(CMD_DELTREE) $(DIR_DOC_API)/* ;; \
-		*) echo "obviously not.." ;; \
-	esac)
+	@( \
+		read -p "are you sure?!? [y/N] > " sure; \
+		case $$sure in \
+			[Yy]) $(CMD_DELTREE) $(DIR_DOC_API)/* ;; \
+			*) echo "obviously not.." ;; \
+		esac \
+	)
 
 
 docxml:
@@ -75,6 +78,6 @@ browse: doc
 		-t "file://$$(cd "$(DIR_BUILD)" || exit 7 && pwd)/html/index.html"
 
 serial:
-	@$(CMD_DEVMON) --port "$(DEVICE)" --baud $(BAUDRT)
+	@$(CMD_PLATFORMIO) device monitor --port "$(DEVICE)" --baud $(BAUDRT)
 serialcom:
 	@$(CMD_MINICOM) -D "$(DEVICE)" -b $(BAUDRT)
