@@ -34,6 +34,8 @@ String Console::pad(char chomped, char filler, String txt, bool prepend, uint16_
 }
 // SERIAL OUTPUT //
 void Console::raw(int data) { Serial.write(data); }
+void Console::raw(char chr) { Serial.write(chr); }
+
 void Console::text(String txt, bool newline) {
     Serial.print(join(txt, (newline ? _param.newline : ""))); Serial.flush();
 }

@@ -1,2 +1,7 @@
+.clang_complete
+.gcc-flags.json
+.pioenvs
+.piolibdeps
 doc/_build/*
-
+example/*/.travis.yml
+lib/readme.txt

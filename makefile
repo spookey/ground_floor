@@ -1,6 +1,7 @@
 __HEADER__		?=	Ground Floor Makefile
 DIR_SOURCE		?=	src
 DIR_DOCUMENT	?=	doc
+DIR_EXAMPLE		?=	example
 DIR_DOC_API		?=	$(DIR_DOCUMENT)/api
 DIR_BUILD		?=	$(DIR_DOCUMENT)/_build
 DIR_BUILD_XML	?=	$(DIR_BUILD)/doxyxml
@@ -9,55 +10,76 @@ DEVICE			?=	/dev/cu.SLAB_USBtoUART
 BAUDRT			?=	115200
 
 
-___LINE___		:=	$$( \
-	printf "%0.s-" $$(seq 1 $$(printf "%s" "$(__HEADER__)" | wc -c); \
-))
+define _line
+$$( \
+	printf "%0.s$(1)" $$(seq 1 $$(printf "%s" "$(2)" | wc -c)) \
+)
+endef
+define _heading
+$$( \
+	printf "%s\n%s\n%s\n" \
+		"$(call _line,$(1),$(2))" \
+		"$(2)" \
+		"$(call _line,$(1),$(2))" \
+)
+endef
 
 help:
-	@echo $(__HEADER__)
-	@echo $(___LINE___)
+	@echo "$(call _heading,-,$(__HEADER__))"
 	@echo
-	@echo "clean"		"\t\t"	"cleanup all files"
-	@echo "cleanapi"	"\t"	"cleanup all api documentation files"
-	@echo "cleandoc"	"\t"	"cleanup all documentation files"
+	@echo "all"			"\t\t"	"shortcut for 'doc' 'docapi' 'buildsample'"
+	@echo
 	@echo "cleansample"	"\t"	"cleanup all example project files"
+	@echo "cleandoc"	"\t"	"cleanup all documentation files"
+	@echo "cleanxml"	"\t"	"cleanup all doxygen xml files"
+	@echo "clean"		"\t\t"	"shortcut for 'cleansample'"
+	@echo "cleanall"	"\t\t"	"shortcut 'cleandoc' 'cleanxml' 'cleansample'"
 	@echo
 	@echo "doc"			"\t\t"	"build all documentation with sphinx"
-	@echo "docapi"		"\t\t"	"generate apidoc from xml with breathe-apidoc"
 	@echo "docwait"		"\t"	"watch for changes and build docs then"
 	@echo "docxml"		"\t\t"	"create xml with doxygen"
+	@echo "docapi"		"\t\t"	"generate apidoc from xml with breathe-apidoc"
+	@echo "docsample"	"\t"	"create documentation for example projects"
+	@echo
+	@echo "rmdocapi"	"\t"	"remove api documentation files"
+	@echo "rmdocsample"	"\t"	"remove all example projects documentation"
+	@echo
+	@echo "buildsample"	"\t"	"build all example projects"
 	@echo
 	@echo "browse"		"\t\t"	"open webbroser"
 	@echo
 	@echo "serial"		"\t\t"	"open platformio device monitor on $(DEVICE)"
 	@echo "serialcom"	"\t"	"same but with minicom"
 	@echo "\t->"		"\t"	"switch: 'make serial DEVICE=/dev/cu.blabla'"
+	@echo "\t->"		"\t"	"and/or: 'make serial BAUDRT=115200'"
 	@echo
 
 CMD_APIDOC		:=	breathe-apidoc
 CMD_DELTREE		:=	rm -rfv
 CMD_DOXYGEN		:=	doxygen
 CMD_MINICOM		:=	minicom
+CMD_MKDIR		:=	mkdir -pv
 CMD_PLATFORMIO	:=	platformio
 CMD_PYTHON3		:=	python3
 CMD_SPHINX		:=	sphinx-build
 CMD_WATCHDOG	:=	watchmedo
 
+
+clean: cleansample
+all: doc docapi buildsample
+travis: buildsample
+
 cleanxml:
 	@$(CMD_DELTREE) $(DIR_BUILD_XML)/*
 cleandoc:
 	@$(CMD_DELTREE) $(DIR_BUILD)/*
-clean: cleanxml cleandoc
+cleanall: cleanxml cleandoc cleansample
 
-cleanapi:
-	@( \
-		read -p "are you sure?!? [y/N] > " sure; \
-		case $$sure in \
-			[Yy]) $(CMD_DELTREE) $(DIR_DOC_API)/* ;; \
-			*) echo "obviously not.." ;; \
-		esac \
-	)
 
+rmdocapi: _are_you_sure
+	@$(CMD_DELTREE) $(DIR_DOC_API)/*
+rmdocsample: _are_you_sure
+	@$(CMD_DELTREE) $(DIR_DOCUMENT)/$(DIR_EXAMPLE)/*
 
 docxml:
 	@(cd $(DIR_DOCUMENT) && $(CMD_DOXYGEN))
@@ -81,3 +103,56 @@ serial:
 	@$(CMD_PLATFORMIO) device monitor --port "$(DEVICE)" --baud $(BAUDRT)
 serialcom:
 	@$(CMD_MINICOM) -D "$(DEVICE)" -b $(BAUDRT)
+
+
+PROS_EXAMPLE	:=	$(wildcard $(DIR_EXAMPLE)/*)
+PROS_EXAMPLE_B	:=	$(addprefix build_,$(PROS_EXAMPLE))
+PROS_EXAMPLE_C	:=	$(addprefix clean_,$(PROS_EXAMPLE))
+PROS_EXAMPLE_D	:=	$(addprefix docex_,$(PROS_EXAMPLE))
+.PHONY: _sample
+
+
+buildsample: docsample $(PROS_EXAMPLE_B)
+$(PROS_EXAMPLE_B): _sample
+	@(cd "$(patsubst build_%,%,$@)" && $(CMD_PLATFORMIO) run;)
+
+cleansample: $(PROS_EXAMPLE_C)
+$(PROS_EXAMPLE_C): _sample
+	@(cd "$(patsubst clean_%,%,$@)" && $(CMD_PLATFORMIO) run -t clean;)
+
+
+define _rst_document
+$$( \
+	echo "$(call _heading,=,$(1))"; \
+	echo; \
+	for exfile in "$(DIR_EXAMPLE)/$(1)/src/"*; do \
+		exname="$$(basename "$$exfile")"; \
+		echo; \
+		echo "$(call _heading,-,$$exname)"; \
+		echo; \
+		echo ".. literalinclude:: ../../$$exfile"; \
+		echo "    :language: cpp"; \
+		echo "    :linenos:"; \
+		echo; \
+	done; \
+	echo; \
+)
+endef
+
+docsample: $(PROS_EXAMPLE_D)
+$(PROS_EXAMPLE_D): _sample
+	@(\
+		target="$(patsubst docex_%,$(DIR_DOCUMENT)/%.rst,$@)"; \
+		tgtdir="$$(dirname "$$target")"; \
+		[ ! -d "$$tgtdir" ] && $(CMD_MKDIR) "$$tgtdir"; \
+		source="$(patsubst docex_$(DIR_EXAMPLE)/%,%,$@)"; \
+		result="$(call _rst_document,$$source)"; \
+		echo "$$result" > "$$target"; \
+	)
+
+# convenience - asking for confirmation
+_are_you_sure:
+	@( \
+		read -p "Are you sure?!? [y/N] > " sure && \
+		case "$$sure" in [yY]) true;; *) false;; esac \
+	)

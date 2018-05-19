@@ -9,13 +9,20 @@ PROJECT_NUMBER         = 1.3.37
 PROJECT_BRIEF          = "Shared libraries for embedded stuff"
 OUTPUT_DIRECTORY       =
 CREATE_SUBDIRS         = NO
+ALLOW_UNICODE_NAMES    = NO
 FULL_PATH_NAMES        = NO
 JAVADOC_AUTOBRIEF      = NO
+QT_AUTOBRIEF           = NO
+MULTILINE_CPP_IS_BRIEF = NO
+INHERIT_DOCS           = YES
+TAB_SIZE               = 4
+MARKDOWN_SUPPORT       = YES
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
 EXTRACT_ALL            = YES
 CASE_SENSE_NAMES       = NO
+SHOW_INCLUDE_FILES     = YES
 ENABLED_SECTIONS       =
 ENABLE_PREPROCESSING   = YES
 #---------------------------------------------------------------------------
@@ -25,6 +32,7 @@ QUIET                  = NO
 WARNINGS               = YES
 WARN_IF_UNDOCUMENTED   = YES
 WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
 WARN_AS_ERROR          = NO
 #---------------------------------------------------------------------------
 # Configuration options related to the input files

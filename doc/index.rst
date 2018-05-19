@@ -9,6 +9,12 @@ Contents
 
     api/*
 
+.. toctree::
+    :caption: Example Projects
+    :glob:
+
+    example/*
+
 Indices and tables
 ------------------
 

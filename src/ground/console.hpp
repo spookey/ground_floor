@@ -104,7 +104,12 @@ public:
 
 // SERIAL OUTPUT //
     /// write raw stuff to the serial
+    /// \param data content
     void raw(int data);
+    /// raw writer for single characters
+    /// \param chr content
+    void raw(char chr);
+
     /// write complete strings to the serial
     /// \param txt content to write
     /// \param newline append line ending
