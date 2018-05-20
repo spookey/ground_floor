@@ -40,7 +40,7 @@ void Shell::cmd_launch(String line) {
             args.trim();
             code = _commands[idx](args);
             _launched++;
-            if (code != 0) {
+            if (code != SHELL_OK) {
                 _text.log(F("error"), name, String(_text.get_filler()), args);
                 _text.llg(F("code"), String(code));
                 _text.llg(F("text"), cmd_returncode(code));

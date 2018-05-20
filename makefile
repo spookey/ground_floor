@@ -5,6 +5,7 @@ DIR_EXAMPLE		?=	example
 DIR_DOC_API		?=	$(DIR_DOCUMENT)/api
 DIR_BUILD		?=	$(DIR_DOCUMENT)/_build
 DIR_BUILD_XML	?=	$(DIR_BUILD)/doxyxml
+RST_EXAMPLE		?=	readme.rst
 
 DEVICE			?=	/dev/cu.SLAB_USBtoUART
 BAUDRT			?=	115200
@@ -123,16 +124,22 @@ $(PROS_EXAMPLE_C): _sample
 
 define _rst_document
 $$( \
+	srpath="$(DIR_EXAMPLE)/$(1)/src/"; \
 	echo "$(call _heading,=,$(1))"; \
 	echo; \
-	for exfile in "$(DIR_EXAMPLE)/$(1)/src/"*; do \
+	if [ -f "$$srpath/$(RST_EXAMPLE)" ]; then \
+		cat "$$srpath/$(RST_EXAMPLE)"; \
+	fi; \
+	for exfile in "$$srpath/"*; do \
 		exname="$$(basename "$$exfile")"; \
 		echo; \
-		echo "$(call _heading,-,$$exname)"; \
-		echo; \
-		echo ".. literalinclude:: ../../$$exfile"; \
-		echo "    :language: cpp"; \
-		echo "    :linenos:"; \
+		if [ "$$exname" != "$(RST_EXAMPLE)" ]; then \
+			echo "$(call _heading,-,$$exname)"; \
+			echo; \
+			echo ".. literalinclude:: ../../$$exfile"; \
+			echo "    :language: cpp"; \
+			echo "    :linenos:"; \
+		fi; \
 		echo; \
 	done; \
 	echo; \

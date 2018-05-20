@@ -1,5 +1,22 @@
 #include "main.hpp"
 
+/// it is possible to customize the settings for the serial console.
+/// @see ConsoleParam for further details
+ConsoleParam cparam = ConsoleParam(
+    115200,         ///< customize baud rate
+    SERIAL_8N1,     ///< choose serial configuration
+    "\n\r",         ///< how to express a newline
+    12, 14          ///< indent widths for headlines and following blocks
+);
+
+
+/// to start with default settings, it is possible to leave the parameters:
+/// Console text = Console();
+
+/// otherwise pass them as parameter:
+Console text = Console(cparam);
+
+
 void setup(void) {
     /// before doing anything else a call to .setup() is needed.
     /// this will initialize the serial communication, and prepare the screen
@@ -8,7 +25,7 @@ void setup(void) {
 
 void loop(void) {
 
-/// PRINTING
+// PRINTING //
 
     /// simple text printing is pretty simple...
     text.text("this is just text");
@@ -33,7 +50,7 @@ void loop(void) {
     BREAK
     BREAK
 
-/// STRING PROCESSING
+// STRING PROCESSING //
 
     /// joing strings is pretty straight forward
     text.text(text.join("lol", "cat"));
@@ -81,7 +98,7 @@ void loop(void) {
     BREAK
     BREAK
 
-/// LOG MESSAGES
+// LOG MESSAGES //
 
     /// to introduce some proper way of logging look at this:
     /// think of a topic ("important") and some tag words first ("whatever")
@@ -98,7 +115,7 @@ void loop(void) {
     BREAK
     BREAK
 
-/// SERIAL INPUT
+// SERIAL INPUT //
 
     /// you can listen to single keystrokes
     char typed = text.collect('.');
@@ -117,7 +134,7 @@ void loop(void) {
     BREAK
     BREAK
 
-/// SERVICE
+// SERVICE //
 
     /// bonus feature - get the uptime in a human readable format
     text.log("uptime", text.get_uptime());
