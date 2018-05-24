@@ -11,7 +11,7 @@ String Store::val(Store::Blob blob) {
     switch (blob.flag) {
         case STORE_FLAG_PLAIN:  res = blob.value;           break;
         case STORE_FLAG_HIDDEN: res = _text.join(
-                _text.fill(blob.value.length(), '*'),
+                _text.fill('*', blob.value.length()),
                 F(" ("), String(blob.value.length()), F(")")
             );                                              break;
         case STORE_FLAG_VOID:   res = F("__void__value__"); break;

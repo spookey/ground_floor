@@ -1,63 +1,80 @@
 #include "ground/console.hpp"
 
 void Console::setup(void) {
-    Serial.begin(_param.baudrate, _param.serialconfig);
+    Serial.begin(this->_param.baudrate, this->_param.serialconfig);
     while (!Serial) { delay(0.05); }
-    text(join(
-        fill(8, '\b'), fill(8, '\r'), _param.newline,
-        fill(64, _param.initialize)
+    this->text(this->join(
+        this->fill('\b', 8), this->fill('\r', 8),
+        this->_param.newline,
+        this->fill(this->_param.initialize, 64)
     ));
 }
 // TEXT PROCESSING //
-String Console::fill(uint16_t width, char filler) {
-    String result; while(width--) { result += filler; }
+String Console::join(String aa, String bb) {
+    aa.concat(bb); return aa;
+}
+String Console::join(String aa, String bb, String cc) {
+    aa.concat(bb); aa.concat(cc); return aa;
+}
+String Console::join(String aa, String bb, String cc, String dd) {
+    aa.concat(bb); aa.concat(cc); aa.concat(dd); return aa;
+}
+String Console::fill(char filler, uint16_t width) {
+    String result; while(width--) { result.concat(filler); }
     return result;
 }
 String Console::clip(char left, char right, String txt, uint8_t repeat) {
-    return join(fill(repeat, left), txt, fill(repeat, right));
+    return this->join(
+        this->fill(left, repeat), txt, this->fill(right, repeat)
+    );
 }
 String Console::box(char filler, String txt, uint8_t spacing) {
-    String line = join(
-        clip('+', fill((txt.length() + (2 * spacing)), '-')), _param.newline
+    String line = this->clip('+', this->fill('-', txt.length() + (2*spacing)));
+    String cont = this->clip('|', this->clip(filler, txt, spacing));
+    return this->join(
+        this->join(line, this->_param.newline),
+        this->join(cont, this->_param.newline),
+        this->join(line, this->_param.newline)
     );
-    return join(line, clip('|', clip(filler, txt, spacing)), _param.newline, line);
 }
-String Console::pad(char chomped, char filler, String txt, bool prepend, uint16_t width) {
+String Console::pad(
+    char chomped, char filler, String txt, bool prepend, uint16_t width
+) {
     const uint16_t len = txt.length();
-    if (width <= 2) { return fill(width, chomped); }
+    if (width <= 2) { return this->fill(chomped, width); }
     if (width >= len) {
-        String empty = fill((width - len), filler);
-        return (prepend ? join(empty, txt) : join(txt, empty));
-    } else {
-        return join(txt.substring(0, (width - 2)), fill(2, chomped));
+        String empty = this->fill(filler, (width - len));
+        return (prepend ? this->join(empty, txt) : this->join(txt, empty));
     }
+    return this->join(txt.substring(0, (width - 2)), this->fill(chomped, 2));
 }
 // SERIAL OUTPUT //
 void Console::raw(int data) { Serial.write(data); }
-void Console::raw(char chr) { Serial.write(chr); }
+void Console::raw(char data) { Serial.write(data); }
 
 void Console::text(String txt, bool newline) {
-    Serial.print(join(txt, (newline ? _param.newline : ""))); Serial.flush();
+    if (newline) { txt = this->join(txt, this->_param.newline); }
+    Serial.print(txt); Serial.flush();
 }
 // LOGGING //
 void Console::log(String topic, String txt) {
     topic.toUpperCase();
-    text(join(
-        _param.newline, pad(topic, false, _param.block_part),
-        String(_param.filler), txt
+    this->text(this->join(
+        this->_param.newline,
+        this->pad(topic, false, this->_param.block_part),
+        String(this->_param.filler), txt
     ));
 }
 void Console::llg(String subtopic, String txt) {
-    text(join(
-        pad(subtopic, true, _param.block_full), F(":"),
-        String(_param.filler), txt
+    this->text(this->join(
+        this->pad(subtopic, true, this->_param.block_full),
+        F(":"), String(this->_param.filler), txt
     ));
 }
 void Console::llg(String txt) {
     txt.trim();
-    llg(F("::"), (
-        txt.length() ? join(txt, String(_param.filler)) : F("")
-    ), F(":::"));
+    if (txt.length()) { txt = this->join(txt, String(this->_param.filler)); }
+    this->llg(F("::"), txt, F(":::"));
 }
 // SERIAL INPUT //
 char Console::collect(char nothing) {
@@ -67,27 +84,29 @@ char Console::collect(char nothing) {
 bool Console::brake(unsigned long wait) {
     const unsigned long finish = wait + millis();
     while(millis() < finish) {
-        if (collect() != _param.nocollect) { return true; }
-        else { delay(0.05); }
+        if (collect(this->_param.nocollect) != this->_param.nocollect) {
+            return true;
+        }
+        delay(0.05);
     }
     return false;
 }
 // SERVICE //
 void Console::alarm(String topic, String reason, unsigned long wait) {
     while (true) {
-        log(topic, F("ALARM!"));
-        llg(F("reason"), reason);
-        llg(F("wait"), String(wait));
-        if (brake(wait)) { return; }
+        this->log(topic, F("ALARM!"));
+        this->llg(F("reason"), reason);
+        this->llg(F("wait"), String(wait));
+        if (this->brake(wait)) { return; }
 
         for (uint8_t sos = 0; sos < 3; sos++) {
-            for (uint8_t _ = 0; _ < 3; _++) {
-                for (uint16_t stp = 0; stp < 512 * ((sos == 1) ? 4 : 1); stp++) {
-                    raw('\b');
+            for (uint8_t __ = 0; __ < 3; __++) {
+                for (uint16_t _ = 0; _ < 512 * ((sos == 1) ? 4 : 1); _++) {
+                    this->raw('\b');
                 }
-                if (brake(512)) { return; }
+                if (this->brake(512)) { return; }
             }
-            if (brake(512)) { return; }
+            if (this->brake(512)) { return; }
         }
     }
 }

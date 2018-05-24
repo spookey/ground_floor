@@ -67,7 +67,7 @@ void loop(void) {
     BREAK
 
     /// to generate repeating patterns use .fill()
-    text.text(text.fill(8, '*'));
+    text.text(text.fill('*', 8));
 
     /// or using the default fill character (default: space)
     /// @see ConsoleParam
@@ -115,35 +115,31 @@ void loop(void) {
     BREAK
     BREAK
 
-// SERIAL INPUT //
+// SERVICE //
 
-    /// you can listen to single keystrokes
-    char typed = text.collect('.');
-    ///< if nothing was typed '.' will be returned:
-    text.text(text.join("you typed: ", String(typed)));
+    // SERIAL INPUT //
+    /// it is possible to wait some time for a keystroke
+    text.text(text.join(
+        "press any key in the next ",
+        String(2 * PAUSE),
+        " milliseconds for alarm"
+    ));
+    if (text.brake(2 * PAUSE)) {
 
-    BREAK
+        text.text("you pressed some key -> alarm!");
+        text.text("look at the tx led!");
 
-    /// it is also possible to wait some time for a keystroke
-    if (text.brake(512)) {
-        text.text("a winner is you!");
-    } else {
-        text.text("you're doing it wrong!");
+        /// something went very wrong? just break and send some sos-signal
+        /// (look at the tx led)
+        text.alarm("panic", "press the any key again to abort");
+
+
     }
 
     BREAK
-    BREAK
-
-// SERVICE //
 
     /// bonus feature - get the uptime in a human readable format
     text.log("uptime", text.get_uptime());
-
-    BREAK
-
-    /// something went very wrong? just break and send some sos-signal
-    /// (look at the tx led)
-    text.alarm("panic", "press the any key to continue");
 
     BREAK
     BREAK

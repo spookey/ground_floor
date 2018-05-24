@@ -9,7 +9,7 @@
 void setup(void);
 void loop(void);
 
-#define PAUSE   512
-#define BREAK   delay(PAUSE); text.text(); text.text();
+#define PAUSE   1024
+#define BREAK   delay(PAUSE); text.text();
 
 #endif

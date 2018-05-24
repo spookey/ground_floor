@@ -51,26 +51,30 @@ public:
 // TEXT PROCESSING //
     /// combine two strings
     /// \return ``'aa' + 'bb'``
-    String join(String aa, String bb) { return aa + bb; }
+    String join(String aa, String bb);
     /// combine three strings
-    String join(String aa, String bb, String cc) { return aa + bb + cc; }
+    String join(String aa, String bb, String cc);
     /// combine four strings
-    String join(String aa, String bb, String cc, String dd) { return aa + bb + cc + dd; }
+    String join(String aa, String bb, String cc, String dd);
 
     /// generate repeating strings
+    /// \param filler character to repeat
+    /// \param width how often to repat the character
     /// \return ``width * 'filler'``
-    String fill(uint16_t width, char filler);
+    String fill(char filler, uint16_t width);
     /// alias for Console::fill with default filler
-    String fill(uint16_t width) { return fill(width, _param.filler); }
+    String fill(uint16_t width) {
+        return this->fill(width, this->_param.filler);
+    }
 
     /// embrace a string
-    /// \return ``(repeat * 'left') + 'txt' + (repeat * 'right') (+ '\n')``
+    /// \return ``(repeat * 'left') + 'txt' + (repeat * 'right')``
     String clip(
         char left, char right, String txt, uint8_t repeat = 1
     );
-    /// alias for Console::clip with equal strings
+    /// alias for Console::clip with equal strings left and right
     String clip(char clamp, String txt, uint8_t repeat = 1) {
-        return clip(clamp, clamp, txt, repeat);
+        return this->clip(clamp, clamp, txt, repeat);
     }
 
     /// draw a box around text
@@ -85,7 +89,7 @@ public:
     String box(char filler, String txt, uint8_t spacing = 1);
     /// alias for Console::box with default filler
     String box(String txt, uint8_t spacing = 1) {
-        return box(_param.filler, txt, spacing);
+        return this->box(this->_param.filler, txt, spacing);
     }
 
     /// align text in a grid
@@ -94,12 +98,22 @@ public:
     /// \param width total output width
     /// \param filler the whitespace character
     /// \param chomped use this character to signal ``txt.length() >= width``
-    String pad(char chomped, char filler, String txt, bool prepend, uint16_t width);
+    String pad(
+        char chomped, char filler, String txt, bool prepend, uint16_t width
+    );
+    /// alias for Console::pad with default chomp character
     String pad(char filler, String txt, bool prepend, uint16_t width) {
-        return pad(_param.chomped, filler, txt, prepend, width);
+        return this->pad(
+            this->_param.chomped, filler,
+            txt, prepend, width
+        );
     }
+    /// alias for Console::pad with default chomp and filler characters
     String pad(String txt, bool prepend, uint16_t width) {
-        return pad(_param.chomped, _param.filler, txt, prepend, width);
+        return this->pad(
+            this->_param.chomped, this->_param.filler,
+            txt, prepend, width
+        );
     }
 
 // SERIAL OUTPUT //
@@ -108,11 +122,12 @@ public:
     void raw(int data);
     /// raw writer for single characters
     /// \param chr content
-    void raw(char chr);
+    void raw(char data);
 
     /// write complete strings to the serial
     /// \param txt content to write
     /// \param newline append line ending
+    /// call it with empty parameters to just print a newline
     void text(String txt = "", bool newline = true);
 
 // LOGGING //
@@ -123,15 +138,15 @@ public:
     void log(String topic, String txt);
     /// log two message strings
     void log(String topic, String aa, String bb) {
-        log(topic, join(aa, bb));
+        this->log(topic, this->join(aa, bb));
     }
     /// log three message strings
     void log(String topic, String aa, String bb, String cc) {
-        log(topic, join(aa, bb, cc));
+        this->log(topic, this->join(aa, bb, cc));
     }
     /// log four message strings
     void log(String topic, String aa, String bb, String cc, String dd) {
-        log(topic, join(aa, bb, cc, dd));
+        this->log(topic, this->join(aa, bb, cc, dd));
     }
 
     /// continue a logging block, indented
@@ -141,15 +156,15 @@ public:
     void llg(String subtopic, String txt);
     /// llg two message strings
     void llg(String topic, String aa, String bb) {
-        llg(topic, join(aa, bb));
+        this->llg(topic, this->join(aa, bb));
     }
     /// llg three message strings
     void llg(String topic, String aa, String bb, String cc) {
-        llg(topic, join(aa, bb, cc));
+        this->llg(topic, this->join(aa, bb, cc));
     }
     /// llg four message strings
     void llg(String topic, String aa, String bb, String cc, String dd) {
-        llg(topic, join(aa, bb, cc, dd));
+        this->llg(topic, this->join(aa, bb, cc, dd));
     }
     /// short form for llg to use as empty divider
     void llg(String txt="");
@@ -159,7 +174,7 @@ public:
     /// \param nothing what to return if no input was present
     char collect(char nothing);
     /// Console::collect shortcut with defaults
-    char collect(void) { return collect(_param.nocollect); }
+    char collect(void) { return collect(this->_param.nocollect); }
     /// some kind of breakable delay - stops on keypress
     /// (timing is not exact!)
     ///
@@ -181,9 +196,9 @@ public:
     String get_uptime(void);
 
     /// make defined newline characters available for others
-    String get_newline(void) { return _param.newline; }
+    String get_newline(void) { return this->_param.newline; }
     /// tell me more about whitespace..
-    char get_filler(void) { return _param.filler; }
+    char get_filler(void) { return this->_param.filler; }
 
 private:
     const ConsoleParam _param;      ///< stores current ConsoleParam
