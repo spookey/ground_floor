@@ -2,28 +2,32 @@
 
 // COMMANDS //
 bool Shell::enroll(Shell::Command &cmd) {
-    for (uint8_t idx = 0; idx < _cmd_idx; idx++) {
-        if (&_commands[idx] == &cmd) { return true; }
+    for (uint8_t idx = 0; idx < this->_cmd_idx; idx++) {
+        if (&this->_commands[idx] == &cmd) { return true; }
     }
-    if (_cmd_idx < _param.command_limit) {
-        _commands[_cmd_idx] = cmd;
-        _cmd_idx++;
+    if (this->_cmd_idx < this->_param.command_limit) {
+        this->_commands[this->_cmd_idx] = cmd;
+        this->_cmd_idx++;
         return true;
     }
     return false;
 }
 // HANDLING //
 void Shell::cmd_help(void) {
-    _text.log(F("shell"), F("commands"));
-    _text.llg(F("enrolled"), String(_cmd_idx));
-    _text.llg(F("free"), String(_param.command_limit - _cmd_idx));
-    _text.llg(F("launched"), String(_launched));
-    if (!_cmd_idx) { return; }
-    _text.llg();
-    for (uint8_t idx = 0; idx < _cmd_idx; idx++) {
-        _text.llg(_commands[idx].name, _commands[idx].help);
+    this->_text.log(F("shell"), F("commands"));
+    this->_text.llg(F("enrolled"), String(this->_cmd_idx));
+    this->_text.llg(F("free"), String(
+        this->_param.command_limit - this->_cmd_idx
+    ));
+    this->_text.llg(F("launched"), String(this->_launched));
+    if (!this->_cmd_idx) { return; }
+    this->_text.llg();
+    for (uint8_t idx = 0; idx < this->_cmd_idx; idx++) {
+        this->_text.llg(
+            this->_commands[idx].name, this->_commands[idx].help
+        );
     }
-    _text.llg(F("anything else"), F("this help"));
+    this->_text.llg(F("anything else"), F("this help"));
 }
 void Shell::cmd_launch(String line) {
     String name, args = "";
@@ -36,68 +40,74 @@ void Shell::cmd_launch(String line) {
         name = line;
     }
     for (uint8_t idx = 0; idx < _cmd_idx; idx++) {
-        if (name == _commands[idx].name) {
+        if (name == this->_commands[idx].name) {
             args.trim();
-            code = _commands[idx](args);
-            _launched++;
+            code = this->_commands[idx](args);
+            this->_launched++;
             if (code != SHELL_OK) {
-                _text.log(F("error"), name, String(_text.get_filler()), args);
-                _text.llg(F("code"), String(code));
-                _text.llg(F("text"), cmd_returncode(code));
+                this->_text.log(
+                    F("error"), name, String(this->_text.get_filler()), args
+                );
+                this->_text.llg(F("code"), String(code));
+                this->_text.llg(F("text"), cmd_returntext(code));
             }
             return;
         }
     }
-    cmd_help();
+    this->cmd_help();
 }
 // INTERFACE //
 void Shell::ready(void) {
-    _buf_idx = 0;
-    _text.text(_text.join(
-        _text.get_newline(),
-        _text.pad(_param.prompt, false, _param.prompt.length() + 1)
+    this->_buf_idx = 0;
+    this->_text.text(this->_text.join(
+        this->_text.get_newline(), this->_text.pad(
+            this->_param.prompt, false, 1 + this->_param.prompt.length()
+        )
     ), false);
 }
 void Shell::append(char typed) {
-    if (_buf_idx < _param.buffer_limit && typed > 31 && typed < 127) {
-        _buffer[_buf_idx] = typed;
-        _buffer[_buf_idx + 1] = '\0';
-        _buf_idx++;
-        _text.raw(typed);
-        if (_param.double_echo) {
-            _text.raw(SHELL_KEY_BACKSP);
-            _text.raw(typed);
+    if (
+        this->_buf_idx < this->_param.buffer_limit &&
+        typed > 31 && typed < 127
+    ) {
+        this->_buffer[this->_buf_idx] = typed;
+        this->_buffer[1 + this->_buf_idx] = '\0';
+        this->_buf_idx++;
+        this->_text.raw(typed);
+        if (this->_param.double_echo) {
+            this->_text.raw(SHELL_KEY_BACKSP);
+            this->_text.raw(typed);
         }
     }
 }
 void Shell::remove(uint16_t num) {
     while (num--) {
-        if (_buf_idx > 0) {
-            _buffer[_buf_idx] = '\0';
-            _buf_idx--;
-            _text.raw(SHELL_KEY_BACKSP);
-            if (_param.double_echo) {
-                _text.raw(' ');
-                _text.raw(SHELL_KEY_BACKSP);
+        if (this->_buf_idx > 0) {
+            this->_buffer[this->_buf_idx] = '\0';
+            this->_buf_idx--;
+            this->_text.raw(SHELL_KEY_BACKSP);
+            if (this->_param.double_echo) {
+                this->_text.raw(' ');
+                this->_text.raw(SHELL_KEY_BACKSP);
             }
         }
     }
 }
 void Shell::invoke(void) {
-    String line = _buffer;
+    String line = String(this->_buffer);
     line.trim();
-    if (_buf_idx > 0 && line.length() > 0) {
-        cmd_launch(line);
+    if (this->_buf_idx > 0 && line.length() > 0) {
+        this->cmd_launch(line);
     }
-    ready();
+    this->ready();
 }
 
 void Shell::loop(void) {
-    char typed = _text.collect();
+    char typed = this->_text.collect();
     switch (typed) {
-        case SHELL_KEY_RETURN:          invoke();           break;
-        case SHELL_KEY_ESCAPE:          remove(_buf_idx);   break;
-        case SHELL_KEY_BACKSP:          remove();           break;
-        default:                        append(typed);      break;
+        case SHELL_KEY_RETURN:  this->invoke();                 break;
+        case SHELL_KEY_ESCAPE:  this->remove(this->_buf_idx);   break;
+        case SHELL_KEY_BACKSP:  this->remove();                 break;
+        default:                this->append(typed);            break;
     }
 }

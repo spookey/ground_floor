@@ -30,6 +30,7 @@ enum ShellCodes { _SHELL_RETURNCODE(_SHELL_ENLISTMENT) };
 
 typedef uint8_t shell_t;        ///< use this as returncode
 
+
 /// \struct ShellParam
 /// \brief stores parameters for the shell
 /// \brief pass this into Shell::Shell
@@ -48,7 +49,7 @@ struct ShellParam {
 #endif
         bool double_echo = true         ///< repeat input twice
     ) : prompt(prompt), command_limit(command_limit),
-    buffer_limit(buffer_limit), double_echo(double_echo) {}
+        buffer_limit(buffer_limit), double_echo(double_echo) {}
 };
 
 
@@ -58,12 +59,16 @@ struct ShellParam {
 class Shell {
 public:
     /// constuctor @see ShellParam
-    Shell(Console& text, ShellParam param) : _text(text), _param(param) {
-        _commands = new Command[_param.command_limit];
-        _buffer = new char[_param.buffer_limit];
+    Shell(
+        Console& text, const ShellParam& param
+    ) : _text(text), _param(param) {
+        this->_commands = new Command[this->_param.command_limit];
+        this->_buffer = new char[this->_param.buffer_limit];
     }
     /// constuctor with default values
-    Shell(Console& text) : Shell(text, ShellParam()) {}
+    Shell(
+        Console& text
+    ) : Shell(text, ShellParam()) {}
 
     /// capture input and react
     void loop(void);
@@ -86,19 +91,24 @@ private:
         /// \param member callback function pointer
         /// \param args pass data to callback
         template<typename T>
-        static shell_t callback(void* owner, uintptr_t* member, String args) {
+        static shell_t callback(
+            void* owner, uintptr_t* member, String args
+        ) {
             T* obj = static_cast<T*>(owner);
-            shell_t (T::**mbr)(String) = reinterpret_cast<shell_t (T::**)(String)>(member);
+            shell_t (T::**mbr)(String) =
+                reinterpret_cast<shell_t (T::**)(String)>(member);
             return (obj->**mbr)(args);
         }
 
         /// public interface to call back
         /// \param args content to pass into callback
-        shell_t operator()(String args) { return callback_p(owner_p, member_p, args); }
+        shell_t operator()(String args) {
+            return this->callback_p(this->owner_p, this->member_p, args);
+        }
     };
 
     /// implementation of command enrollment
-    bool enroll(Command& cmd);
+    bool enroll(Shell::Command& cmd);
 
 public:
     /// enroll some new command
@@ -110,15 +120,17 @@ public:
     /// \param name command name
     /// \param help command help text
     template<typename T>
-    bool enroll(T* owner,                   /// \cond BREATHE_FAILS_HERE
-            shell_t (T::*member)(String),   /// \endcond
-            String name, String help = "-") {
-        Command* cmd = new Command;
+    bool enroll(
+        T* owner,                           /// \cond BREATHE_FAILS_HERE
+        shell_t (T::*member)(String),       /// \endcond
+        String name, String help = "-"
+    ) {
+        Shell::Command* cmd = new Shell::Command;
         cmd->owner_p = static_cast<void*>(owner);
         *reinterpret_cast<shell_t (T::**)(String)>(cmd->member_p) = member;
-        cmd->callback_p = &Command::callback<T>;
+        cmd->callback_p = &Shell::Command::callback<T>;
         cmd->name = name; cmd->help = help;
-        return enroll(*cmd);
+        return this->enroll(*cmd);
     }
 
 private:
@@ -132,7 +144,7 @@ private:
 #endif
     /// \param code numeric return code
     /// \return text of return code
-    String cmd_returncode(shell_t code) {
+    String cmd_returntext(shell_t code) {
         String text;
         switch(code) { _SHELL_RETURNCODE(_SHELL_SWITCHCASE) }
         text.toLowerCase();
@@ -161,7 +173,7 @@ private:
 
 private:
     Console& _text;                         ///< keep console for in/output here
-    const ShellParam _param;                ///< stores current ShellParam
+    const ShellParam& _param;               ///< stores current ShellParam
 
     uint8_t _cmd_idx = 0;                   ///< current enrolled commands position
     Command* _commands;                     ///< store enrolled commands
@@ -172,7 +184,7 @@ private:
 
 public:
     /// get number of launched commands
-    uint16_t get_launched(void) { return _launched; }
+    uint16_t get_launched(void) { return this->_launched; }
 
 };
 

@@ -41,9 +41,13 @@ struct ConsoleParam {
 class Console {
 public:
     /// constuctor @see ConsoleParam
-    Console(ConsoleParam param) : _param(param) {};
+    Console(
+        const ConsoleParam& param
+    ) : _param(param) {};
     /// constuctor with default values
-    Console(void) : _param(ConsoleParam()) {};
+    Console(
+        void
+    ) : _param(ConsoleParam()) {};
 
     /// use this to setup and begin serial communication
     void setup(void);
@@ -201,7 +205,7 @@ public:
     char get_filler(void) { return this->_param.filler; }
 
 private:
-    const ConsoleParam _param;      ///< stores current ConsoleParam
+    const ConsoleParam& _param;      ///< stores current ConsoleParam
 
 };
 
