@@ -17,6 +17,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
@@ -64,7 +65,9 @@ master_doc = 'index'
 
 # General information about the project.
 project = the_name
-copyright = '2017-2018, {}'.format(the_author)
+copyright = '2017-{}, {}'.format(
+    datetime.datetime.now().year, the_author
+)
 author = the_author
 
 # The version info for the project you're documenting, acts as replacement for
@@ -82,6 +85,12 @@ release = '1.3.37'
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
 language = None
+
+# There are two options for replacing |today|: either, you set today to some
+# non-false value, then it is used:
+# today = 'tomorrow'
+# Else, today_fmt is used as the format for a strftime call.
+today_fmt = '%d. %B %Y'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

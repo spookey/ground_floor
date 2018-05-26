@@ -21,3 +21,11 @@ Indices and tables
 * :ref:`genindex`
 * Hello! Yes, this is Dog!
 * :ref:`search`
+
+.. raw:: html
+
+   <style>.build-info { text-align: right; font-size: 0.9em; }</style>
+
+.. container:: build-info
+
+   *last build*: |today|
