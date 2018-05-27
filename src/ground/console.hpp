@@ -19,15 +19,20 @@ struct ConsoleParam {
     char filler; char chomped; char nocollect; char initialize;
 
     ConsoleParam(
-        unsigned long baudrate = 115200,            ///< baud rate
-        SERIALCONFIG_T serialconfig = SERIAL_8N1,   ///< serial configuration
-        String newline = String("\n\r"),            ///< line endings
-        uint16_t block_part = 12,   ///< headline indent width
-        uint16_t block_full = 14,   ///< indent for follow up blocks
-        char filler = ' ',          ///< when drawing whitespace, use this char
-        char chomped = '.',         ///< use this char if text got stripped away
-        char nocollect = '\0',      ///< what to return if no character was collected
-        char initialize = '^'       ///< clean up screen on start by repeating this char
+        unsigned long baudrate = 115200,    ///< baud rate
+        SERIALCONFIG_T serialconfig = SERIAL_8N1,
+                                            ///< serial configuration
+        String newline = String("\n\r"),    ///< line endings
+        uint16_t block_part = 12,           ///< headline indent width
+        uint16_t block_full = 14,           ///< indent for follow up blocks
+        char filler = ' ',                  ///< when drawing whitespace,
+                                            ///< use this char
+        char chomped = '.',                 ///< use this char as replacement
+                                            ///< for stripped text
+        char nocollect = '\0',              ///< what to return if no
+                                            ///< character was collected
+        char initialize = '^'               ///< clean up screen on startup
+                                            ///< by repeating this char
     ) : baudrate(baudrate), serialconfig(serialconfig), newline(newline),
         block_part(block_part), block_full(block_full), filler(filler),
         chomped(chomped), nocollect(nocollect), initialize(initialize) {}
@@ -125,7 +130,7 @@ public:
     /// \param data content
     void raw(int data);
     /// raw writer for single characters
-    /// \param chr content
+    /// \param data content
     void raw(char data);
 
     /// write complete strings to the serial
@@ -205,7 +210,7 @@ public:
     char get_filler(void) { return this->_param.filler; }
 
 private:
-    const ConsoleParam& _param;      ///< stores current ConsoleParam
+    const ConsoleParam& _param;             ///< stores current ConsoleParam
 
 };
 
