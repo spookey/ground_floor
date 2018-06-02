@@ -25,7 +25,7 @@ struct StoreParam{
         char col_delimit = '\n',            ///< blob delimiter
         char row_delimit = '\t'             ///< element delimiter
     ) : chain_limit(chain_limit), ee_offset(ee_offset), filename(filename),
-    col_delimit(col_delimit), row_delimit(row_delimit) {}
+        col_delimit(col_delimit), row_delimit(row_delimit) {}
 };
 
 /// \enum StoreFlags
@@ -42,21 +42,25 @@ enum StoreFlags {
 class Store {
 public:
     /// constuctor @see StoreParam
-    Store(Console& text, Shell& shell, StoreParam param)
-    : _text(text), _shell(shell), _param(param) {
-        _chain = new Blob[_param.chain_limit];
+    Store(
+        Console& text, Shell& shell, const StoreParam& param
+    ) : _text(text), _shell(shell), _param(param) {
+        _chain = new Store::Blob[this->_param.chain_limit];
     }
     /// constuctor with default values
-    Store(Console& text, Shell& shell)
-    : Store(text, shell, StoreParam()) {}
+    Store(
+        Console& text, Shell& shell
+    ) : Store(text, shell, StoreParam()) {}
 
     /// to register shell commands and load config
     void setup(void);
 
 private:
-    virtual bool dump(void) = 0;                ///<  write to storage media
-    virtual bool load(bool soft = false) = 0;   ///< read from storage media
-    virtual bool wipe(bool full = false) = 0;   ///< erase storage media
+    virtual bool dump(void) = 0;            ///<  write to storage media
+    virtual bool load(bool soft = false) = 0;
+                                            ///< read from storage media
+    virtual bool wipe(bool full = false) = 0;
+                                            ///< erase storage media
 
 protected:
     /// \struct Blob
@@ -65,18 +69,18 @@ protected:
 
 // HANDLING //
     /// helper to output value according to flags
-    String val(Blob blob);
+    String val(Store::Blob blob);
 
 private:
     /// retrieve raw store entries by key
     /// \return empty Store::Blob with flag STORE_FLAG_VOID if key not present
-    Blob get(String key);
+    Store::Blob get(String key);
     /// updates flag and value of existing store entry
-    bool change(Blob blob);
+    bool change(Store::Blob blob);
 
 protected:
     /// update existing or add new store entry in chain
-    bool append(Blob blob);
+    bool append(Store::Blob blob);
 
 public:
     /// create a new store entry in the chain
@@ -92,9 +96,9 @@ public:
 // CONVERT //
 protected:
     /// take a Blob, pickle it
-    String pickle(Blob blob);
+    String pickle(Store::Blob blob);
     /// take a String, unpickle it
-    Blob unpickle(String line);
+    Store::Blob unpickle(String line);
 
 // COMMANDS //
 private:
@@ -104,9 +108,9 @@ private:
 protected:
     Console& _text;                         ///< keep console for in/output here
     Shell& _shell;                          ///< keep shell for commands here
-    const StoreParam _param;                ///< stores current StoreParam
+    const StoreParam& _param;               ///< stores current StoreParam
 
-    Blob* _chain;                           ///< (╯°□°）╯︵ ┻━┻
+    Store::Blob* _chain;                    ///< (╯°□°）╯︵ ┻━┻
     uint8_t _chn_idx = 0;                   ///< current position in chain
 
 };

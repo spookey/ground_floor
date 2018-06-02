@@ -16,18 +16,22 @@
 class StoreSPIFFS : public Store {
 public:
     /// constuctor @see StoreParam
-    StoreSPIFFS(Console& text, Shell& shell, StoreParam param)
-    : Store(text, shell, param) {}
+    StoreSPIFFS(
+        Console& text, Shell& shell, const StoreParam& param
+    ) : Store(text, shell, param) {}
     /// constuctor with default values
-    StoreSPIFFS(Console& text, Shell& shell)
-    : Store(text, shell) {}
+    StoreSPIFFS(
+        Console& text, Shell& shell
+    ) : Store(text, shell) {}
 
     /// mount the spiffs
     /// - stops in infinite loop on mount error
     void setup(void) {
 #ifdef ESP8266
         if (!SPIFFS.begin()) {
-            while (true) { _text.alarm(F("StoreSPIFFS"), F("could not mount SPIFFS")); }
+            while (true) { this->_text.alarm(
+                F("StoreSPIFFS"), F("could not mount SPIFFS")
+            ); }
         }
 #endif
         Store::setup();
@@ -38,22 +42,22 @@ private:
 #ifndef ESP8266
         return false;
 #else
-        _text.log(F("StoreSPIFFS"), F("dump"));
-        _text.llg(F("filename"), _param.filename);
-        File file = SPIFFS.open(_param.filename, "w+");
+        this->_text.log(F("StoreSPIFFS"), F("dump"));
+        this->_text.llg(F("filename"), this->_param.filename);
+        File file = SPIFFS.open(this->_param.filename, "w+");
         if (!file) {
-            _text.llg(F("ERROR"), F("open failed"));
+            this->_text.llg(F("ERROR"), F("open failed"));
             return false;
         }
         if (!file.seek(0, SeekSet)) {
-            _text.llg(F("ERROR"), F("rewind failed"));
+            this->_text.llg(F("ERROR"), F("rewind failed"));
             return false;
         }
         uint16_t size = 0;
-        for (uint8_t idx = 0; idx < _chn_idx; idx++) {
-            size += file.print(pickle(_chain[idx]));
+        for (uint8_t idx = 0; idx < this->_chn_idx; idx++) {
+            size += file.print(this->pickle(this->_chain[idx]));
         }
-        _text.llg(F("SUCCESS"), F("dumped "), String(size), F(" bytes"));
+        this->_text.llg(F("SUCCESS"), F("dumped "), String(size), F(" bytes"));
         file.close();
         return true;
 #endif
@@ -63,28 +67,30 @@ private:
 #ifndef ESP8266
         return false;
 #else
-        _text.log(F("StoreSPIFFS"), F("load"));
-        _text.llg(F("filename"), _param.filename);
-        if (!SPIFFS.exists(_param.filename)) {
-            _text.llg(F("ERROR"), F("file does not exist"));
+        this->_text.log(F("StoreSPIFFS"), F("load"));
+        this->_text.llg(F("filename"), this->_param.filename);
+        if (!SPIFFS.exists(this->_param.filename)) {
+            this->_text.llg(F("ERROR"), F("file does not exist"));
             return false;
         }
-        File file = SPIFFS.open(_param.filename, "r");
+        File file = SPIFFS.open(this->_param.filename, "r");
         if (!file) {
-            _text.llg(F("ERROR"), F("open failed"));
+            this->_text.llg(F("ERROR"), F("open failed"));
             return false;
         }
         if (!file.seek(0, SeekSet)) {
-            _text.llg(F("ERROR"), F("rewind failed"));
+            this->_text.llg(F("ERROR"), F("rewind failed"));
             return false;
         }
-        Blob blob;
+        Store::Blob blob;
         bool result = true;
-        _text.llg();
+        this->_text.llg();
         while (file.available()) {
-            blob = unpickle(file.readStringUntil(_param.col_delimit));
-            if (soft) { _text.llg(blob.key, val(blob)); }
-            else if (!append(blob)) { result = false; }
+            blob = this->unpickle(
+                file.readStringUntil(this->_param.col_delimit)
+            );
+            if (soft) { this->_text.llg(blob.key, val(blob)); }
+            else if (!this->append(blob)) { result = false; }
         }
         file.close();
         return result;
@@ -95,16 +101,16 @@ private:
 #ifndef ESP8266
         return false;
 #else
-        _text.log(F("StoreSPIFFS"), F("wipe"));
+        this->_text.log(F("StoreSPIFFS"), F("wipe"));
         if (full) {
-            _text.llg(F("full wipe"), F("format"));
+            this->_text.llg(F("full wipe"), F("format"));
             SPIFFS.format();
         } else {
-            _text.llg(F("quick wipe"), F("zeroing out"));
-            _text.llg(F("filename"), _param.filename);
-            File file = SPIFFS.open(_param.filename, "w+");
+            this->_text.llg(F("quick wipe"), F("zeroing out"));
+            this->_text.llg(F("filename"), this->_param.filename);
+            File file = SPIFFS.open(this->_param.filename, "w+");
             if (!file || !file.seek(0, SeekSet)) {
-                _text.llg(F("ERROR"), F("file access error"));
+                this->_text.llg(F("ERROR"), F("file access error"));
                 return false;
             }
             file.print(String());
