@@ -23,16 +23,9 @@ help:
 
 ###############################################################################
 
-.PHONY: cleanxml cleanapi cleanhtml
-cleanxml:
-	rm -rf "$(DIR_BUILD_XML)"
-cleanapi:
-	rm -rf "$(DIR_DOC_API)"
-cleanhtml:
-	rm -rf "$(DIR_BUILD_DOC)"
-
-
-###############################################################################
+.PHONY: cleandoc
+cleandoc:
+	sphinx-build -M clean "$(DIR_DOCUMENT)" "$(DIR_BUILD_DOC)"
 
 .PHONY: docxml docapi dochtml
 docxml:
@@ -67,7 +60,7 @@ $(BUILD_SAMPLE): $(P_EXAMPLE)
 build: dochtml buildsample
 
 .PHONY: clean
-clean: cleanxml cleanhtml cleansample
+clean: cleandoc cleansample
 
 .PHONY: doc
 doc: dochtml

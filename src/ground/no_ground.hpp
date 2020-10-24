@@ -15,7 +15,7 @@ private:
 
 public:
     /** shit in, shit out
-     * @param something data
+     * @param some data
      * @return the same
      * */
     bool pass(bool some) { return some; }
