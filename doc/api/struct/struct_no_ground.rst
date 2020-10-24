@@ -1,0 +1,4 @@
+Struct NoGround
+===============
+
+.. doxygenstruct:: NoGround
