@@ -1,4 +1,0 @@
-Class StoreEEPROM
-=================
-
-.. doxygenclass:: StoreEEPROM

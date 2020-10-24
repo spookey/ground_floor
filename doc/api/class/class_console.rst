@@ -1,4 +1,0 @@
-Class Console
-=============
-
-.. doxygenclass:: Console

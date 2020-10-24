@@ -1,4 +1,0 @@
-Class Store
-===========
-
-.. doxygenclass:: Store

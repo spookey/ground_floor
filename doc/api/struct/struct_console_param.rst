@@ -1,4 +1,0 @@
-Struct ConsoleParam
-===================
-
-.. doxygenstruct:: ConsoleParam

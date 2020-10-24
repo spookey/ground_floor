@@ -1,4 +1,0 @@
-Struct StoreParam
-=================
-
-.. doxygenstruct:: StoreParam
