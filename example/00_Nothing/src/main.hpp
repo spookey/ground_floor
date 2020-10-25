@@ -1,10 +1,8 @@
-#ifndef _main_cpp_
-#define _main_cpp_
+#ifndef _main_hpp_
+#define _main_hpp_
 
-#include "Arduino.h"
-
-#include "ground/no_ground.hpp"
-#include "floor/no_floor.hpp"
+#include <Arduino.h>
+#include "nothing.hpp"
 
 void setup();
 void loop();

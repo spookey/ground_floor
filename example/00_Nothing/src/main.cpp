@@ -1,14 +1,8 @@
 #include "main.hpp"
 
 void setup() {
-    NoGround no_ground = NoGround();
-    NoFloor no_floor = NoFloor();
-
-    if (no_ground.pass(no_floor.yes())) {
-        no_ground.pass(no_floor.no());
-    }
+    Nothing none = Nothing();
+    none.none();
 };
 
-void loop() {
-    delay(millis());
-};
+void loop() {};

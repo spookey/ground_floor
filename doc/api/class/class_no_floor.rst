@@ -1,4 +1,0 @@
-Class NoFloor
-=============
-
-.. doxygenclass:: NoFloor

@@ -15,9 +15,9 @@ help:
 	@echo "| ground_floor |"
 	@echo "+--------------+"
 	@echo
-	@echo "build"
-	@echo "clean"
-	@echo "doc"
+	@echo "build                build all example projects"
+	@echo "doc                  build sphinx documentation"
+	@echo "clean                cleanup all unneeded files"
 	@echo
 
 
@@ -26,41 +26,57 @@ help:
 .PHONY: cleandoc
 cleandoc:
 	sphinx-build -M clean "$(DIR_DOCUMENT)" "$(DIR_BUILD_DOC)"
+	touch "$(DIR_BUILD_DOC)/.gitkeep"
 
-.PHONY: docxml docapi dochtml
+
+.PHONY: docxml
 docxml:
 	[ ! -d "$(DIR_BUILD_DOC)" ] && mkdir "$(DIR_BUILD_DOC)" || true
 	(cd "$(DIR_DOCUMENT)" && doxygen)
+
+.PHONY: docapi
 docapi: docxml
-	breathe-apidoc -o "$(DIR_DOC_API)" "$(DIR_BUILD_XML)"
+	breathe-apidoc -f -o "$(DIR_DOC_API)" "$(DIR_BUILD_XML)"
+
+.PHONY: docex
 docex:
-	./ex_doc.py "$(DIR_EXAMPLE)" "$(DIR_DOC_EX)"
+	./gen_doc.py "$(DIR_EXAMPLE)" "$(DIR_DOC_EX)"
+
+.PHONY: dochtml
 dochtml: docex docapi
 	sphinx-build -M html "$(DIR_DOCUMENT)" "$(DIR_BUILD_DOC)"
 
 
 ###############################################################################
 
-P_EXAMPLE		:=	$(wildcard $(DIR_EXAMPLE)/*)
-CLEAN_SAMPLE	:=	$(addprefix clean_,$(P_EXAMPLE))
-BUILD_SAMPLE	:=	$(addprefix build_,$(P_EXAMPLE))
+ENVIRONMENTS	:=	\
+					esp8266 \
+					nano \
 
-cleansample: $(CLEAN_SAMPLE)
-$(CLEAN_SAMPLE): $(P_EXAMPLE)
-	(cd "$(patsubst clean_%,%,$@)" && platformio run --target clean)
+PROJECTS		:=	$(shell find "$(DIR_EXAMPLE)" -type d -depth 1 | sort)
+BUILDS			:=	$(addprefix build_,$(PROJECTS))
+CLEANS			:=	$(addprefix clean_,$(PROJECTS))
 
-buildsample: $(BUILD_SAMPLE)
-$(BUILD_SAMPLE): $(P_EXAMPLE)
-	(cd "$(patsubst build_%,%,$@)" && platformio run)
+define _pio
+	platformio run --project-dir "$(1)" --environment $(2) $(3);
+endef
+
+cleansample: $(CLEANS)
+$(CLEANS): $(PROJECTS)
+	$(foreach env,$(ENVIRONMENTS),$(call _pio,$(patsubst clean_%,%,$@),$(env),--target clean))
+
+buildsample: $(BUILDS)
+$(BUILDS): $(PROJECTS)
+	$(foreach env,$(ENVIRONMENTS),$(call _pio,$(patsubst build_%,%,$@),$(env)))
 
 
 ###############################################################################
 
 .PHONY: build
-build: dochtml buildsample
+build: buildsample
 
 .PHONY: clean
-clean: cleandoc cleansample
+clean: cleansample cleandoc
 
 .PHONY: doc
 doc: dochtml
