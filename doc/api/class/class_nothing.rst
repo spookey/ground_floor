@@ -1,4 +1,0 @@
-Class Nothing
-=============
-
-.. doxygenclass:: Nothing

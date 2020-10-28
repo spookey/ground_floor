@@ -32,6 +32,7 @@ cleandoc:
 .PHONY: docxml
 docxml:
 	[ ! -d "$(DIR_BUILD_DOC)" ] && mkdir "$(DIR_BUILD_DOC)" || true
+	touch "$(DIR_BUILD_DOC)/.gitkeep"
 	(cd "$(DIR_DOCUMENT)" && doxygen)
 
 .PHONY: docapi
