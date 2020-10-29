@@ -57,6 +57,7 @@ ENVIRONMENTS	:=	\
 PROJECTS		:=	$(wildcard $(DIR_EXAMPLE)/*)
 BUILDS			:=	$(addprefix build_,$(PROJECTS))
 CLEANS			:=	$(addprefix clean_,$(PROJECTS))
+TESTS			:=	$(addprefix test_,$(PROJECTS))
 
 define _pio
 	platformio run --project-dir "$(1)" --environment $(2) $(3);
@@ -70,6 +71,9 @@ buildsample: $(BUILDS)
 $(BUILDS): $(PROJECTS)
 	$(foreach env,$(ENVIRONMENTS),$(call _pio,$(patsubst build_%,%,$@),$(env)))
 
+testsample: $(TESTS)
+$(TESTS): $(PROJECTS)
+	platformio test --project-dir "$(patsubst test_%,%,$@)"
 
 ###############################################################################
 
@@ -78,6 +82,9 @@ build: buildsample
 
 .PHONY: clean
 clean: cleansample cleandoc
+
+.PHONY: test
+test: testsample
 
 .PHONY: doc
 doc: dochtml
