@@ -105,6 +105,101 @@ void test_equals_string() {
     TEST_ASSERT_FALSE(two.equals(Str16("one")));
 }
 
+void test_starts_with_char() {
+    Str8 str = Str8('s');
+    Str8 nil = Str8();
+
+    TEST_ASSERT_TRUE(str.starts_with('s'));
+    TEST_ASSERT_FALSE(str.starts_with('c'));
+
+    TEST_ASSERT_FALSE(nil.starts_with('s'));
+    TEST_ASSERT_FALSE(nil.starts_with('c'));
+}
+
+void test_starts_with_char_array() {
+    Str16 str = Str16("string");
+    Str8 nil = Str8();
+
+    TEST_ASSERT_TRUE(str.starts_with('s'));
+    TEST_ASSERT_TRUE(str.starts_with("string"));
+    TEST_ASSERT_FALSE(str.starts_with("string23"));
+    TEST_ASSERT_FALSE(str.starts_with("23string"));
+
+    TEST_ASSERT_TRUE(str.starts_with("s"));
+    TEST_ASSERT_TRUE(str.starts_with("st"));
+    TEST_ASSERT_TRUE(str.starts_with("str"));
+    TEST_ASSERT_FALSE(str.starts_with("stru"));
+    TEST_ASSERT_FALSE(str.starts_with("struc"));
+    TEST_ASSERT_FALSE(str.starts_with("strut"));
+
+    TEST_ASSERT_TRUE(nil.starts_with(""));
+    TEST_ASSERT_FALSE(nil.starts_with("string"));
+}
+
+void test_starts_with_string() {
+    Str16 str = Str16("string");
+    Str8 nil = Str8();
+
+    TEST_ASSERT_TRUE(str.starts_with('s'));
+    TEST_ASSERT_TRUE(str.starts_with("s"));
+
+    TEST_ASSERT_TRUE(str.starts_with(Str8("string")));
+    TEST_ASSERT_FALSE(str.starts_with(Str8("string42")));
+    TEST_ASSERT_FALSE(str.starts_with(Str8("42string")));
+    TEST_ASSERT_FALSE(str.starts_with(Str8("struct")));
+
+    TEST_ASSERT_FALSE(nil.starts_with(Str8("string")));
+    TEST_ASSERT_TRUE(nil.starts_with(nil));
+}
+
+void test_ends_with_char() {
+    Str8 str = Str8('s');
+    Str8 nil = Str8();
+
+    TEST_ASSERT_TRUE(str.ends_with('s'));
+    TEST_ASSERT_FALSE(str.ends_with('c'));
+
+    TEST_ASSERT_FALSE(nil.ends_with('s'));
+    TEST_ASSERT_FALSE(nil.ends_with('c'));
+}
+
+void test_ends_with_char_array() {
+    Str16 str = Str16("string");
+    Str8 nil = Str8();
+
+    TEST_ASSERT_TRUE(str.ends_with('g'));
+    TEST_ASSERT_TRUE(str.ends_with("string"));
+    TEST_ASSERT_FALSE(str.ends_with("string23"));
+    TEST_ASSERT_FALSE(str.ends_with("23string"));
+
+    TEST_ASSERT_TRUE(str.ends_with("g"));
+    TEST_ASSERT_TRUE(str.ends_with("ng"));
+    TEST_ASSERT_TRUE(str.ends_with("ing"));
+    TEST_ASSERT_FALSE(str.ends_with("ting"));
+    TEST_ASSERT_FALSE(str.ends_with("sting"));
+    TEST_ASSERT_FALSE(str.ends_with("esting"));
+    TEST_ASSERT_FALSE(str.ends_with("testing"));
+
+    TEST_ASSERT_TRUE(nil.ends_with(""));
+    TEST_ASSERT_FALSE(nil.ends_with("string"));
+}
+
+void test_ends_with_string() {
+    Str16 str = Str16("string");
+    Str8 nil = Str8();
+
+    TEST_ASSERT_TRUE(str.ends_with('g'));
+    TEST_ASSERT_TRUE(str.ends_with("g"));
+
+    TEST_ASSERT_TRUE(str.ends_with(Str8("string")));
+    TEST_ASSERT_FALSE(str.ends_with(Str8("string42")));
+    TEST_ASSERT_FALSE(str.ends_with(Str8("42string")));
+    TEST_ASSERT_FALSE(str.ends_with(Str8("struct")));
+
+    TEST_ASSERT_FALSE(nil.ends_with(Str8("string")));
+    TEST_ASSERT_TRUE(nil.ends_with(nil));
+}
+
 void test_set_char() {
     Str8 str = Str8('s');
     TEST_ASSERT_TRUE(str == 's');
@@ -161,6 +256,12 @@ void run() {
     RUN_TEST(test_equals_char);
     RUN_TEST(test_equals_char_array);
     RUN_TEST(test_equals_string);
+    RUN_TEST(test_starts_with_char);
+    RUN_TEST(test_starts_with_char_array);
+    RUN_TEST(test_starts_with_string);
+    RUN_TEST(test_ends_with_char);
+    RUN_TEST(test_ends_with_char_array);
+    RUN_TEST(test_ends_with_string);
     RUN_TEST(test_set_char);
     RUN_TEST(test_set_char_array);
     RUN_TEST(test_set_string);

@@ -31,13 +31,16 @@ public:
     /** Desctructor */
     ~Str() {}
 
+
 private:
     char _str[1 + LEN] = {_NIL};
+
 
 public:
     inline const char* operator *() { return _str; }
     /** @return pointer to character array */
     inline const char* c_str() { return _str; }
+
 
 public:
     /** @return designated size of character array */
@@ -51,17 +54,18 @@ public:
     /** @return true if length() == 0 */
     inline bool empty() { return _NIL == _str[0]; }
 
+
 public:
-    template<size_t OLEN>
-    inline bool operator ==(Str<OLEN> str) { return equals(str.c_str()); }
-    template<size_t OLEN>
-    inline bool operator !=(Str<OLEN> str) { return !equals(str.c_str()); }
+    template<size_t SLEN>
+    inline bool operator ==(Str<SLEN> str) { return equals(str.c_str()); }
+    template<size_t SLEN>
+    inline bool operator !=(Str<SLEN> str) { return !equals(str.c_str()); }
     /**
      * @param str other string
      * @return if same content
      */
-    template<size_t OLEN>
-    bool equals(Str<OLEN> str) { return equals(str.c_str()); }
+    template<size_t SLEN>
+    bool equals(Str<SLEN> str) { return equals(str.c_str()); }
 
     inline bool operator ==(const char* str) { return equals(str); }
     inline bool operator !=(const char* str) { return !equals(str); }
@@ -83,13 +87,66 @@ public:
         return (chr == _str[0]);
     }
 
+
+public:
+    /**
+     * @param  str other string
+     * @return if it starts with other string
+     */
+    template<size_t SLEN>
+    bool starts_with(Str<SLEN> str) { return starts_with(str.c_str()); }
+    /**
+     * @param  str other string
+     * @return if it starts with other string
+     */
+    bool starts_with(const char* str) {
+        const size_t len = strlen(str);
+        if (1 > len) { return true; }
+        if (length() < len) { return false; }
+        return (0 == strncmp(_str, str, len));
+    }
+    /**
+     * @param  chr some character
+     * @return if it starts with some character
+     */
+    bool starts_with(const char chr) {
+        return (chr == _str[0]);
+    }
+
+    /**
+     * @param  str other string
+     * @return if it ends with other string
+     */
+    template<size_t SLEN>
+    bool ends_with(Str<SLEN> str) { return ends_with(str.c_str()); }
+    /**
+     * @param  str other string
+     * @return if it ends with other string
+     */
+    bool ends_with(const char* str) {
+        const size_t len = strlen(str);
+        if (1 > len) { return true; }
+        if (length() < len) { return false; }
+        return (0 == strncmp(_str + length() - len, str, len));
+    }
+    /**
+     * @param  chr some character
+     * @return if it ends with some character
+     */
+    bool ends_with(const char chr) {
+        const size_t len = length();
+        if (1 > len) { return false; }
+        return (chr == _str[len - 1]);
+    }
+
+
 public:
     /**
      * @param str new content string
      * @return that string, but different content
      */
-    template<size_t OLEN>
-    Str set(Str<OLEN> str) { return set(str.c_str()); }
+    template<size_t SLEN>
+    Str set(Str<SLEN> str) { return set(str.c_str()); }
     /**
      * @param str new content string
      * @return that string, but different content
