@@ -54,7 +54,7 @@ ENVIRONMENTS	:=	\
 					esp8266 \
 					nano \
 
-PROJECTS		:=	$(shell find "$(DIR_EXAMPLE)" -type d -depth 1 | sort)
+PROJECTS		:=	$(wildcard $(DIR_EXAMPLE)/*)
 BUILDS			:=	$(addprefix build_,$(PROJECTS))
 CLEANS			:=	$(addprefix clean_,$(PROJECTS))
 
