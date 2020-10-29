@@ -6,9 +6,6 @@
 
 #include "ground/str/str.hpp"
 
-#define TLEN     8      // tiny
-#define SLEN    16      // small
-
 using namespace gf;
 
 void run();

@@ -13,9 +13,7 @@ template<size_t LEN>
 class Str {
 public:
     /** Construct an empty string */
-    Str() {
-        _str[LEN] = {_NIL};
-    }
+    Str() { _str[LEN] = {_NIL}; }
     /**
      * Construct string
      * @param str preset text
@@ -37,20 +35,21 @@ private:
     char _str[1 + LEN] = {_NIL};
 
 public:
+    inline const char* operator *() { return _str; }
     /** @return pointer to character array */
     inline const char* c_str() { return _str; }
-    /** @return c_str() */
-    inline const char* c() { return c_str(); }
 
 public:
     /** @return designated size of character array */
-    size_t size() { return LEN; }
+    inline size_t size() { return LEN; }
     /** @return length of content */
-    size_t length() { return strnlen(_str, sizeof(_str)); }
+    inline size_t length() { return strnlen(_str, sizeof(_str)); }
     /** @return how many space is left */
-    size_t left() { return LEN - length(); }
+    inline size_t left() { return LEN - length(); }
+
+    inline bool operator !() { return empty(); }
     /** @return true if length() == 0 */
-    bool empty() { return _NIL == _str[0]; }
+    inline bool empty() { return _NIL == _str[0]; }
 
 public:
     template<size_t OLEN>
@@ -63,14 +62,6 @@ public:
      */
     template<size_t OLEN>
     bool equals(Str<OLEN> str) { return equals(str.c_str()); }
-
-    inline bool operator ==(Str str) { return equals(str.c_str()); }
-    inline bool operator !=(Str str) { return !equals(str.c_str()); }
-    /**
-     * @param str other string
-     * @return if same content
-     */
-    bool equals(Str str) { return equals(str.c_str()); }
 
     inline bool operator ==(const char* str) { return equals(str); }
     inline bool operator !=(const char* str) { return !equals(str); }
@@ -92,7 +83,41 @@ public:
         return (chr == _str[0]);
     }
 
+public:
+    /**
+     * @param str new content string
+     * @return that string, but different content
+     */
+    template<size_t OLEN>
+    Str set(Str<OLEN> str) { return set(str.c_str()); }
+    /**
+     * @param str new content string
+     * @return that string, but different content
+     */
+    Str set(const char* str) {
+        snprintf(_str, sizeof(_str), str);
+        return *this;
+    }
+    /**
+     * @param chr new content character
+     * @return that string, but different content
+     */
+    Str set(const char chr) {
+        _str[0] = chr, _str[1] = _NIL;
+        return *this;
+    }
+    /**
+     * @return that string, but empty
+     */
+    Str clear() { return set(_NIL); }
+
 };
+
+typedef     Str<8>      Str8;       /**< tiny */
+typedef     Str<16>     Str16;      /**< small */
+typedef     Str<32>     Str32;      /**< medium */
+typedef     Str<64>     Str64;      /**< big */
+typedef     Str<128>    Str128;     /**< huge */
 
 }
 #endif

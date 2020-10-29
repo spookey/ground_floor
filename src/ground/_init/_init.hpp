@@ -3,6 +3,6 @@
 
 #include "Arduino.h"
 
-#define _NIL    '\0'    /**< null byte */
+#define     _NIL        '\0'        /**< null byte */
 
 #endif
