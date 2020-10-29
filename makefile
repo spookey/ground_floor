@@ -82,5 +82,5 @@ clean: cleansample cleandoc
 .PHONY: doc
 doc: dochtml
 
-.PHONY: travis
-travis: buildsample
+.PHONY: CI
+CI: buildsample

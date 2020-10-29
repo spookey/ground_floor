@@ -1,0 +1,27 @@
+name: PlatformIO Build
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install -U pip
+          pip install -U platformio
+
+      - name: Update PlatformIO
+        run: |
+          platformio update
+
+      - name: Build
+        run: |
+          make CI
