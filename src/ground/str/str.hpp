@@ -13,27 +13,53 @@ template<size_t LEN>
 class Str {
 public:
     /** Construct an empty string */
-    Str() { _str[LEN] = {_NIL}; }
+    Str() { set(_NIL); }
     /**
      * Construct string
      * @param str preset text
      */
-    explicit Str(const char* str) : Str() {
-        snprintf(_str, sizeof(_str), str);
-    }
+    explicit Str(const char* str) { set(str); }
     /**
      * Construct string from character
      * @param chr preset character
      */
-    Str(const char chr) : Str() {
-        _str[0] = chr; _str[1] = _NIL;
-    }
+    Str(const char chr) { set(chr); }
     /** Desctructor */
     ~Str() {}
 
 
 private:
+    /** internal buffer */
     char _str[1 + LEN] = {_NIL};
+
+
+public:
+    /**
+     * @param str new content string
+     * @return if it worked
+     */
+    template<size_t SLEN>
+    bool set(Str<SLEN> str) { return set(str.c_str()); }
+    /**
+     * @param str new content string
+     * @return if it worked
+     */
+    bool set(const char* str) {
+        const size_t len = snprintf(_str, sizeof(_str), "%s", str);
+        return (0 <= len && sizeof(_str) > len);
+    }
+    /**
+     * @param chr new content character
+     * @return if it worked
+     */
+    bool set(const char chr) {
+        const size_t len = snprintf(_str, sizeof(_str), "%c", chr);
+        return (0 <= len && sizeof(_str) > len);
+    }
+    /**
+     * @return if clearing worked
+     */
+    bool clear() { return set(_NIL); }
 
 
 public:
@@ -140,33 +166,6 @@ public:
     }
 
 
-public:
-    /**
-     * @param str new content string
-     * @return that string, but different content
-     */
-    template<size_t SLEN>
-    Str set(Str<SLEN> str) { return set(str.c_str()); }
-    /**
-     * @param str new content string
-     * @return that string, but different content
-     */
-    Str set(const char* str) {
-        snprintf(_str, sizeof(_str), str);
-        return *this;
-    }
-    /**
-     * @param chr new content character
-     * @return that string, but different content
-     */
-    Str set(const char chr) {
-        _str[0] = chr, _str[1] = _NIL;
-        return *this;
-    }
-    /**
-     * @return that string, but empty
-     */
-    Str clear() { return set(_NIL); }
 
 };
 

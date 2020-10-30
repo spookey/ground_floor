@@ -49,6 +49,49 @@ void test_char_pointer() {
     TEST_ASSERT_EQUAL_CHAR('\0', (*str)[6]);
 }
 
+void test_set_char() {
+    Str8 str = Str8('s');
+    TEST_ASSERT_TRUE(str == 's');
+
+    TEST_ASSERT_TRUE(str.set('c'));
+    TEST_ASSERT_TRUE(str == 'c');
+}
+
+void test_set_char_array() {
+    const char txt[] = {'s', 't', 'r', 'i', 'n', 'g', '\0'};
+    const char cnt[] = {'c', 'o', 'n', 't', 'e', 'n', 't', '\0'};
+    Str16 str = Str16(txt);
+
+    TEST_ASSERT_TRUE(str == "string");
+    TEST_ASSERT_TRUE(str.set(cnt));
+    TEST_ASSERT_TRUE(str == "content");
+}
+
+void test_set_string() {
+    Str16 str = Str16("string");
+    TEST_ASSERT_TRUE(str == "string");
+
+    TEST_ASSERT_TRUE(str.set("content"));
+    TEST_ASSERT_TRUE(str == "content");
+}
+
+void test_clear() {
+    Str16 str = Str16("string");
+
+    TEST_ASSERT_EQUAL_size_t(16, str.size());
+    TEST_ASSERT_EQUAL_size_t(6, str.length());
+    TEST_ASSERT_FALSE(str.empty());
+    TEST_ASSERT_FALSE(!str);
+
+    TEST_ASSERT_TRUE(str.clear());
+
+    TEST_ASSERT_EQUAL_size_t(16, str.size());
+    TEST_ASSERT_EQUAL_size_t(0, str.length());
+    TEST_ASSERT_TRUE(str.empty());
+    TEST_ASSERT_TRUE(!str);
+    TEST_ASSERT_EQUAL_size_t(16 - 0, str.left());
+}
+
 void test_equals_char() {
     Str8 str = Str8('s');
 
@@ -200,59 +243,16 @@ void test_ends_with_string() {
     TEST_ASSERT_TRUE(nil.ends_with(nil));
 }
 
-void test_set_char() {
-    Str8 str = Str8('s');
-    TEST_ASSERT_TRUE(str == 's');
-
-    Str8 chr = str.set('c');
-    TEST_ASSERT_TRUE(chr == 'c');
-    TEST_ASSERT_TRUE(str == 'c');
-}
-
-void test_set_char_array() {
-    const char txt[] = {'s', 't', 'r', 'i', 'n', 'g', '\0'};
-    const char cnt[] = {'c', 'o', 'n', 't', 'e', 'n', 't', '\0'};
-    Str16 str = Str16(txt);
-
-    TEST_ASSERT_TRUE(str == "string");
-    Str16 tmp = str.set(cnt);
-    TEST_ASSERT_TRUE(tmp == "content");
-    TEST_ASSERT_TRUE(str == "content");
-}
-
-void test_set_string() {
-    Str16 str = Str16("string");
-    TEST_ASSERT_TRUE(str == "string");
-
-    Str16 tmp = str.set("content");
-    TEST_ASSERT_TRUE(tmp == "content");
-    TEST_ASSERT_TRUE(str == "content");
-}
-
-void test_clear() {
-    Str16 str = Str16("string");
-
-    TEST_ASSERT_EQUAL_size_t(6, str.length());
-    TEST_ASSERT_FALSE(str.empty());
-
-    Str16 nil = str.clear();
-
-    TEST_ASSERT_EQUAL_size_t(16, nil.size());
-    TEST_ASSERT_EQUAL_size_t(0, nil.length());
-    TEST_ASSERT_TRUE(nil.empty());
-    TEST_ASSERT_TRUE(!nil);
-    TEST_ASSERT_EQUAL_size_t(16 - 0, nil.left());
-
-    TEST_ASSERT_EQUAL_size_t(0, str.length());
-    TEST_ASSERT_TRUE(str.empty());
-}
-
 
 void run() {
     RUN_TEST(test_construct_empty);
     RUN_TEST(test_construct_preset_string);
     RUN_TEST(test_construct_preset_char);
     RUN_TEST(test_char_pointer);
+    RUN_TEST(test_set_char);
+    RUN_TEST(test_set_char_array);
+    RUN_TEST(test_set_string);
+    RUN_TEST(test_clear);
     RUN_TEST(test_equals_char);
     RUN_TEST(test_equals_char_array);
     RUN_TEST(test_equals_string);
@@ -262,8 +262,4 @@ void run() {
     RUN_TEST(test_ends_with_char);
     RUN_TEST(test_ends_with_char_array);
     RUN_TEST(test_ends_with_string);
-    RUN_TEST(test_set_char);
-    RUN_TEST(test_set_char_array);
-    RUN_TEST(test_set_string);
-    RUN_TEST(test_clear);
 }
