@@ -12,6 +12,7 @@ void setup() {
     Serial.begin(115200, SERIAL_8N1);
     while(!Serial) { delay(0.01); }
     Serial.println();
+    Serial.println();
 
     demo();
 }

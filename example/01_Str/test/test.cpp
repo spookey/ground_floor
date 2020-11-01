@@ -1,13 +1,18 @@
 #include "test.hpp"
 
 void test_construct_empty() {
-    Str16 str = Str16();
+    Str8 str = Str8();
 
-    TEST_ASSERT_EQUAL_size_t(16, str.size());
+    TEST_ASSERT_EQUAL_size_t(8, str.size());
     TEST_ASSERT_EQUAL_size_t(0, str.length());
     TEST_ASSERT_TRUE(str.empty());
     TEST_ASSERT_TRUE(!str);
-    TEST_ASSERT_EQUAL_size_t(16 - 0, str.left());
+    TEST_ASSERT_EQUAL_size_t(8 - 0, str.left());
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "\0\0\0\0\0\0\0\0\0",
+        str.c_str(), 1 + 8
+    );
 }
 
 void test_construct_preset_string() {
@@ -18,6 +23,11 @@ void test_construct_preset_string() {
     TEST_ASSERT_FALSE(str.empty());
     TEST_ASSERT_FALSE(!str);
     TEST_ASSERT_EQUAL_size_t(16 - 6, str.left());
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "string\0\0\0\0\0\0\0\0\0\0\0",
+        str.c_str(), 1 + 16
+    );
 }
 
 void test_construct_preset_char() {
@@ -28,9 +38,24 @@ void test_construct_preset_char() {
     TEST_ASSERT_FALSE(str.empty());
     TEST_ASSERT_FALSE(!str);
     TEST_ASSERT_EQUAL_size_t(8 - 1, str.left());
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "s\0\0\0\0\0\0\0\0\0",
+        str.c_str(), 1 + 8
+    );
 }
 
 void test_char_pointer() {
+    Str8 nil = Str8();
+    TEST_ASSERT_EQUAL_CHAR('\0', nil.c_str()[0]);
+    TEST_ASSERT_EQUAL_CHAR('\0', (*nil)[0]);
+
+    Str8 chr = Str8('s');
+    TEST_ASSERT_EQUAL_CHAR('s', chr.c_str()[0]);
+    TEST_ASSERT_EQUAL_CHAR('s', (*chr)[0]);
+    TEST_ASSERT_EQUAL_CHAR('\0', chr.c_str()[1]);
+    TEST_ASSERT_EQUAL_CHAR('\0', (*chr)[1]);
+
     Str16 str = Str16("string");
     TEST_ASSERT_EQUAL_CHAR('s', str.c_str()[0]);
     TEST_ASSERT_EQUAL_CHAR('t', str.c_str()[1]);
@@ -55,24 +80,45 @@ void test_set_char() {
 
     TEST_ASSERT_TRUE(str.set('c'));
     TEST_ASSERT_TRUE(str == 'c');
+
+    TEST_ASSERT_FALSE(str.set("overflowing string"));
+    TEST_ASSERT_TRUE(str == "overflow");
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "overflow\0",
+        str.c_str(), 1 + 8
+    );
 }
 
 void test_set_char_array() {
     const char txt[] = {'s', 't', 'r', 'i', 'n', 'g', '\0'};
     const char cnt[] = {'c', 'o', 'n', 't', 'e', 'n', 't', '\0'};
-    Str16 str = Str16(txt);
-
+    Str8 str = Str8(txt);
     TEST_ASSERT_TRUE(str == "string");
+
     TEST_ASSERT_TRUE(str.set(cnt));
     TEST_ASSERT_TRUE(str == "content");
+
+    TEST_ASSERT_FALSE(str.set("overflowing string"));
+    TEST_ASSERT_TRUE(str == "overflow");
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "overflow\0",
+        str.c_str(), 1 + 8
+    );
 }
 
 void test_set_string() {
-    Str16 str = Str16("string");
+    Str8 str = Str8("string");
     TEST_ASSERT_TRUE(str == "string");
 
     TEST_ASSERT_TRUE(str.set("content"));
     TEST_ASSERT_TRUE(str == "content");
+
+    TEST_ASSERT_FALSE(str.set("overflowing string"));
+    TEST_ASSERT_TRUE(str == "overflow");
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "overflow\0",
+        str.c_str(), 1 + 8
+    );
 }
 
 void test_clear() {
@@ -80,6 +126,7 @@ void test_clear() {
 
     TEST_ASSERT_EQUAL_size_t(16, str.size());
     TEST_ASSERT_EQUAL_size_t(6, str.length());
+    TEST_ASSERT_EQUAL_size_t(16 - 6, str.left());
     TEST_ASSERT_FALSE(str.empty());
     TEST_ASSERT_FALSE(!str);
 
@@ -87,9 +134,9 @@ void test_clear() {
 
     TEST_ASSERT_EQUAL_size_t(16, str.size());
     TEST_ASSERT_EQUAL_size_t(0, str.length());
+    TEST_ASSERT_EQUAL_size_t(16 - 0, str.left());
     TEST_ASSERT_TRUE(str.empty());
     TEST_ASSERT_TRUE(!str);
-    TEST_ASSERT_EQUAL_size_t(16 - 0, str.left());
 }
 
 void test_equals_char() {

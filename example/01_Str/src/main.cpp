@@ -54,6 +54,7 @@ void demo() {
     // clear and reassign:
     hello.set("Goodbye");
     world.clear();
+
     // hello is now longer (=7):
     Serial.print("(Hello) length: "); Serial.println(hello.length());
     // world is now empty (=0):

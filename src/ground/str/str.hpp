@@ -53,8 +53,8 @@ public:
      * @return if it worked
      */
     bool set(const char chr) {
-        const size_t len = snprintf(_str, sizeof(_str), "%c", chr);
-        return (0 <= len && sizeof(_str) > len);
+        const char buf[] = {chr, _NIL};
+        return set(buf);
     }
     /**
      * @return if clearing worked
@@ -72,13 +72,13 @@ public:
     /** @return designated size of character array */
     inline size_t size() { return LEN; }
     /** @return length of content */
-    inline size_t length() { return strnlen(_str, sizeof(_str)); }
+    inline size_t length() { return strnlen(_str, LEN); }
     /** @return how many space is left */
     inline size_t left() { return LEN - length(); }
 
     inline bool operator !() { return empty(); }
     /** @return true if length() == 0 */
-    inline bool empty() { return _NIL == _str[0]; }
+    inline bool empty() { return (0 == length()); }
 
 
 public:
@@ -110,7 +110,8 @@ public:
      * @return if same content
      */
     bool equals(const char chr) {
-        return (chr == _str[0]);
+        const char buf[] = {chr, _NIL};
+        return equals(buf);
     }
 
 
@@ -136,7 +137,8 @@ public:
      * @return if it starts with some character
      */
     bool starts_with(const char chr) {
-        return (chr == _str[0]);
+        const char buf[] = {chr, _NIL};
+        return starts_with(buf);
     }
 
     /**
@@ -160,12 +162,9 @@ public:
      * @return if it ends with some character
      */
     bool ends_with(const char chr) {
-        const size_t len = length();
-        if (1 > len) { return false; }
-        return (chr == _str[len - 1]);
+        const char buf[] = {chr, _NIL};
+        return ends_with(buf);
     }
-
-
 
 };
 
