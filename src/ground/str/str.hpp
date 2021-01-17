@@ -166,6 +166,60 @@ public:
         return ends_with(buf);
     }
 
+
+public:
+    /**
+     * @param str other string
+     * @return if it worked
+     */
+    template<size_t SLEN>
+    bool append(Str<SLEN> str) { return append(str.c_str()); }
+    /**
+     * @param str other string
+     * @return if it worked
+     */
+    bool append(const char* str) {
+        if (left() < strnlen(str, sizeof(str))) { return false; };
+        strncat(_str, str, sizeof(_str));
+        return true;
+    }
+    /**
+     * @param chr some character
+     * @return if it worked
+     */
+    bool append(const char chr) {
+        const char buf[] = {chr, _NIL};
+        return append(buf);
+    }
+
+    /**
+     * @param str other string
+     * @return if it worked
+     */
+    template<size_t SLEN>
+    bool prepend(Str<SLEN> str) { return prepend(str.c_str()); }
+
+    /**
+     * @param str other string
+     * @return if it worked
+     */
+    bool prepend(const char* str) {
+        if (left() < strnlen(str, sizeof(str))) { return false; };
+        char buf[1 + LEN] = {_NIL};
+        strncpy(buf, str, sizeof(buf));
+        strncat(buf, _str, sizeof(buf));
+        strncpy(_str, buf, sizeof(_str));
+        return true;
+    }
+
+    /**
+     * @param chr some character
+     * @return if it worked
+     */
+    bool prepend(const char chr) {
+        const char buf[] = {chr, _NIL};
+        return prepend(buf);
+    }
 };
 
 typedef     Str<8>      Str8;       /**< tiny */

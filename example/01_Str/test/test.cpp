@@ -290,6 +290,98 @@ void test_ends_with_string() {
     TEST_ASSERT_TRUE(nil.ends_with(nil));
 }
 
+void test_append_char() {
+    Str8 str = Str8('s');
+
+    TEST_ASSERT_TRUE(str == 's');
+    TEST_ASSERT_TRUE(str.append('c'));
+    TEST_ASSERT_TRUE(str == "sc");
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "sc\0\0\0\0\0\0\0",
+        str.c_str(), 1 + 8
+    );
+}
+
+void test_append_char_array() {
+    const char txt[] = {'s', 't', 'r', 'i', 'n', 'g', '\0'};
+    const char cnt[] = {'c', 'o', 'n', 't', 'e', 'n', 't', '\0'};
+    Str16 str = Str16();
+
+    TEST_ASSERT_TRUE(str == "");
+    TEST_ASSERT_TRUE(str.append(txt));
+    TEST_ASSERT_TRUE(str == "string");
+    TEST_ASSERT_TRUE(str.append(cnt));
+    TEST_ASSERT_TRUE(str == "stringcontent");
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "stringcontent\0\0\0\0",
+        str.c_str(), 1 + 16
+    );
+}
+
+void test_append_string() {
+    Str16 str = Str16("string");
+    TEST_ASSERT_TRUE(str == "string");
+
+    TEST_ASSERT_TRUE(str.append("content"));
+    TEST_ASSERT_TRUE(str == "stringcontent");
+
+    TEST_ASSERT_FALSE(str.append("overflow"));
+    TEST_ASSERT_TRUE(str == "stringcontent");
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "stringcontent\0\0\0\0",
+        str.c_str(), 1 + 16
+    );
+}
+
+void test_prepend_char() {
+    Str8 str = Str8('s');
+
+    TEST_ASSERT_TRUE(str == 's');
+    TEST_ASSERT_TRUE(str.prepend('c'));
+    TEST_ASSERT_TRUE(str == "cs");
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "cs\0\0\0\0\0\0\0",
+        str.c_str(), 1 + 8
+    );
+}
+
+void test_prepend_char_array() {
+    const char txt[] = {'s', 't', 'r', 'i', 'n', 'g', '\0'};
+    const char cnt[] = {'c', 'o', 'n', 't', 'e', 'n', 't', '\0'};
+    Str16 str = Str16();
+
+    TEST_ASSERT_TRUE(str == "");
+    TEST_ASSERT_TRUE(str.prepend(txt));
+    TEST_ASSERT_TRUE(str == "string");
+    TEST_ASSERT_TRUE(str.prepend(cnt));
+    TEST_ASSERT_TRUE(str == "contentstring");
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "contentstring\0\0\0\0",
+        str.c_str(), 1 + 16
+    );
+}
+
+void test_prepend_string() {
+    Str16 str = Str16("string");
+    TEST_ASSERT_TRUE(str == "string");
+
+    TEST_ASSERT_TRUE(str.prepend("content"));
+    TEST_ASSERT_TRUE(str == "contentstring");
+
+    TEST_ASSERT_FALSE(str.prepend("overflow"));
+    TEST_ASSERT_TRUE(str == "contentstring");
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "contentstring\0\0\0\0",
+        str.c_str(), 1 + 16
+    );
+}
+
 
 void run() {
     RUN_TEST(test_construct_empty);
@@ -309,4 +401,10 @@ void run() {
     RUN_TEST(test_ends_with_char);
     RUN_TEST(test_ends_with_char_array);
     RUN_TEST(test_ends_with_string);
+    RUN_TEST(test_append_char);
+    RUN_TEST(test_append_char_array);
+    RUN_TEST(test_append_string);
+    RUN_TEST(test_prepend_char);
+    RUN_TEST(test_prepend_char_array);
+    RUN_TEST(test_prepend_string);
 }
