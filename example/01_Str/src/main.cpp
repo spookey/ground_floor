@@ -28,8 +28,6 @@ void demo() {
         Serial.print("(World) left:   "); Serial.println(world.left());
     }
 
-    Serial.println();
-
     // comparisons:
     if (!hello.equals(world)) {
         // or use the operators:
@@ -61,4 +59,21 @@ void demo() {
     Serial.print("(World) length: "); Serial.println(world.length());
 
     Serial.println();
+
+    // append and prepend:
+    hello.append(',');
+    world.prepend("World");
+
+    // hello is now longer (=8):
+    Serial.print("(Hello) length: "); Serial.println(hello.length());
+    // world is reset now (=5):
+    Serial.print("(World) length: "); Serial.println(world.length());
+
+    // returns false if remaining space is too short:
+    if (hello.prepend("long text with more than 16 characters")) {
+        // ...and the original content stays intact:
+        if (world.append("again some lengthy text")) {
+            Serial.println("> Unreachable statement <");
+        }
+    }
 };
