@@ -217,6 +217,21 @@ public:
         const char buf[] = {chr, _NIL};
         return prepend(buf);
     }
+
+
+public:
+    /* Uppercase string */
+    void upper() {
+        for (size_t pos = 0; pos < length(); pos++) {
+            _str[pos] = toupper(_str[pos]);
+        }
+    }
+    /* Lowercase string */
+    void lower() {
+        for (size_t pos = 0; pos < length(); pos++) {
+            _str[pos] = tolower(_str[pos]);
+        }
+    }
 };
 
 typedef     Str<8>      Str8;       /**< tiny */

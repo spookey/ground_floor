@@ -220,7 +220,7 @@ void test_starts_with_char_array() {
     TEST_ASSERT_TRUE(str.starts_with("str"));
     TEST_ASSERT_FALSE(str.starts_with("stru"));
     TEST_ASSERT_FALSE(str.starts_with("struc"));
-    TEST_ASSERT_FALSE(str.starts_with("strut"));
+    TEST_ASSERT_FALSE(str.starts_with("struct"));
 
     TEST_ASSERT_TRUE(nil.starts_with(""));
     TEST_ASSERT_FALSE(nil.starts_with("string"));
@@ -382,6 +382,35 @@ void test_prepend_string() {
     );
 }
 
+void test_upper_lower() {
+    Str8 chr = Str8('c');
+    Str16 str = Str16("string");
+
+    TEST_ASSERT_TRUE(chr == "c");
+    TEST_ASSERT_TRUE(str == "string");
+
+    chr.upper();
+    str.upper();
+
+    TEST_ASSERT_TRUE(chr == "C");
+    TEST_ASSERT_TRUE(str == "STRING");
+
+    chr.lower();
+    str.lower();
+
+    TEST_ASSERT_TRUE(chr == "c");
+    TEST_ASSERT_TRUE(str == "string");
+
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "c\0\0\0\0\0\0\0\0",
+        chr.c_str(), 1 + 8
+    );
+    TEST_ASSERT_EQUAL_CHAR_ARRAY(
+        "string\0\0\0\0\0\0\0\0\0\0\0",
+        str.c_str(), 1 + 16
+    );
+}
+
 
 void run() {
     RUN_TEST(test_construct_empty);
@@ -407,4 +436,5 @@ void run() {
     RUN_TEST(test_prepend_char);
     RUN_TEST(test_prepend_char_array);
     RUN_TEST(test_prepend_string);
+    RUN_TEST(test_upper_lower);
 }

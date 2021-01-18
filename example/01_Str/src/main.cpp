@@ -76,4 +76,13 @@ void demo() {
             Serial.println("> Unreachable statement <");
         }
     }
+
+    Serial.println();
+
+    // change case:
+    hello.upper();
+    world.lower();
+
+    Serial.println(*hello);
+    Serial.println(world.c_str());
 };
