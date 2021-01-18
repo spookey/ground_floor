@@ -1,9 +1,12 @@
+os: linux
+dist: bionic
+
 language: python
 python:
-  - "3.8"
+  - "3.9"
 
-sudo: off
 cache:
+  pip: true
   directories:
     - "${HOME}/.platformio"
     - "${TRAVIS_BUILD_DIR}/.pio"
